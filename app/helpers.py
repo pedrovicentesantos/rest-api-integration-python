@@ -10,23 +10,16 @@ def get_artist_id(artist):
     response = requests.get(url)
     if (response.status_code == 200):
       response_json = response.json()
-      resultNumber = response_json["resultCount"]
-      if(resultNumber == 1):
-        artistId = response_json["results"][0]["artistId"]
-        artistName = response_json["results"][0]["artistName"]
-      elif(resultNumber == 0):
-        artistId = artistName = ""
-      else:
+      resultCount = response_json["resultCount"]
+      if (resultCount != 0):
         for result in response_json["results"]:
           artistName = result["artistName"]
           if (artistName.lower() == artist.lower()):
             artistId = result["artistId"]
             break
-      if (not artistId):
-        artistName = ""
-      return artistId,artistName
+    return artistId,artistName
   except Exception as e:
-	  print(e)
+	  print("Error: ",e)
 
 def get_albuns_artist(artist):
   url = "https://itunes.apple.com/lookup?entity=album&id=" + str(artist)
