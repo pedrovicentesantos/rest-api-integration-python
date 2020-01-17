@@ -78,11 +78,15 @@ def update_artist(index):
         if (not onItunes):
           id = None
           name = artist['name']
-        sql = "UPDATE artists SET nameArtist = %s, idArtistItunes=%s WHERE idArtist= %s"
-        data = (name,id,index)
-        cursor.execute(sql,data)
-        connection.commit()
-        response = jsonify("Update successful.")  
+        findNameArtist = helpers.on_db(artist,"artists")
+        if (not findNameArtist):
+          sql = "UPDATE artists SET nameArtist = %s, idArtistItunes=%s WHERE idArtist= %s"
+          data = (name,id,index)
+          cursor.execute(sql,data)
+          connection.commit()
+          response = jsonify("Update successful.")  
+        else:
+          response = jsonify("Artist already on DB.")  
     response.status_code = 200
     return response
   except Exception as e:
