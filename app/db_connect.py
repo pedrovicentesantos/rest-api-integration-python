@@ -7,5 +7,5 @@ def connect_to_db():
     if (connection.is_connected()):
       return connection
   except Exception as e:
-    print("An error occured: ", e)
+    print("Error: ", e)
   
