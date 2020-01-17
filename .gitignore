@@ -1,0 +1,4 @@
+.vscode
+app/__pycache__
+app/obterDados.py
+env
