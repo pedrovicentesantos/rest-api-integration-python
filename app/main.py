@@ -1,4 +1,3 @@
-from obterDados import get_artist_id, get_albuns_artist, get_songs_artist
 import pymysql
 from app import app
 import helpers
@@ -540,7 +539,7 @@ def add_album(index):
       if (not artistId):
         response = "Artist not on iTunes, no Albuns."
       else:
-        albuns = get_albuns_artist(artistId)
+        albuns = helpers.get_albuns_artist(artistId)
         dataToSave = []
         for album in albuns:
           
@@ -597,7 +596,7 @@ def add_song(index):
         response = "Album not on iTunes, no Songs."
       else:
 
-        songs = get_songs_artist(albumId)
+        songs = helpers.get_songs_artist(albumId)
         dataToSave = []
         for song in songs:
           
@@ -650,7 +649,7 @@ def get_all_albuns_artist_itunes(index):
     else:  
       artistId = row[2]
       if (artistId):
-        albuns = get_albuns_artist(artistId)
+        albuns = helpers.get_albuns_artist(artistId)
         response = []
         for album in albuns:
           response.append(
@@ -682,7 +681,7 @@ def get_all_songs_artist_itunes(index):
     else:  
       artistId = row[2]
       if (artistId):
-        songs = get_songs_artist(artistId)
+        songs = helpers.get_songs_artist(artistId)
         response = []
         for song in songs:
           response.append(
@@ -713,7 +712,7 @@ def get_all_songs_album_itunes(index):
     else:  
       albumId = row[5]
       if (albumId):
-        songs = get_songs_artist(albumId)
+        songs = helpers.get_songs_artist(albumId)
         response = []
         for song in songs:
           response.append(

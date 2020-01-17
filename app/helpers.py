@@ -1,6 +1,54 @@
 import pymysql
+import requests
+import json
 from db_connect import connect_to_db
-from obterDados import get_artist_id
+
+def get_artist_id(artist):
+  try:
+    artistId = artistName = ""
+    url = "https://itunes.apple.com/search?entity=musicArtist&term=" + artist
+    response = requests.get(url)
+    if (response.status_code == 200):
+      response_json = response.json()
+      resultNumber = response_json["resultCount"]
+      if(resultNumber == 1):
+        artistId = response_json["results"][0]["artistId"]
+        artistName = response_json["results"][0]["artistName"]
+      elif(resultNumber == 0):
+        artistId = artistName = ""
+      else:
+        for result in response_json["results"]:
+          artistName = result["artistName"]
+          if (artistName.lower() == artist.lower()):
+            artistId = result["artistId"]
+            break
+      if (not artistId):
+        artistName = ""
+      return artistId,artistName
+  except Exception as e:
+	  print(e)
+
+def get_albuns_artist(artist):
+  url = "https://itunes.apple.com/lookup?entity=album&id=" + str(artist)
+  response = requests.get(url)
+  albuns = []
+  if (response.status_code == 200):
+    response_json = response.json()
+    for result in response_json["results"]:
+      if (result["wrapperType"] == "collection"):
+        albuns.append(result)
+  return albuns
+
+def get_songs_artist(artist):
+  url = "https://itunes.apple.com/lookup?limit=200&entity=song&id=" + str(artist)
+  response = requests.get(url)
+  songs = []
+  if (response.status_code == 200):
+    response_json = response.json()
+    for result in response_json["results"]:
+      if (result["wrapperType"] == "track"):
+        songs.append(result)
+  return songs
 
 def on_db(item,table):
   try:
@@ -77,8 +125,6 @@ def id_on_db(id,table):
       cursor.close()
       connection.close()
   
-
-
 def is_on_itunes(artist):
   onItunes = False
   try:
