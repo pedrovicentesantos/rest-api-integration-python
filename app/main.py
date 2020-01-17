@@ -450,10 +450,11 @@ def delete_song(index):
       response = "Song not on DB."
     else:
       sql = "DELETE FROM songs WHERE idSong=%s"
-      cursor = connection.cursor()
-      cursor.execute(sql,(index,))
-      connection.commit()
-      response = "Deletion successful."
+      if (connection.is_connected()):
+        cursor = connection.cursor()
+        cursor.execute(sql,(index,))
+        connection.commit()
+        response = "Deletion successful."
     response = jsonify(response)
     response.status_code = 200
     return response
