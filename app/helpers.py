@@ -21,27 +21,26 @@ def get_artist_id(artist):
   except Exception as e:
 	  print("Error: ",e)
 
-def get_albuns_artist(artist):
-  url = "https://itunes.apple.com/lookup?entity=album&id=" + str(artist)
-  response = requests.get(url)
-  albuns = []
-  if (response.status_code == 200):
-    response_json = response.json()
-    for result in response_json["results"]:
-      if (result["wrapperType"] == "collection"):
-        albuns.append(result)
-  return albuns
-
-def get_songs_artist(artist):
-  url = "https://itunes.apple.com/lookup?limit=200&entity=song&id=" + str(artist)
-  response = requests.get(url)
-  songs = []
-  if (response.status_code == 200):
-    response_json = response.json()
-    for result in response_json["results"]:
-      if (result["wrapperType"] == "track"):
-        songs.append(result)
-  return songs
+def get_type_from_id(id, searchType):
+  try:
+    url = "https://itunes.apple.com/lookup?limit=200&entity=" + searchType
+    url += "&id="
+    url += str(id)
+    print(url)
+    response = requests.get(url)
+    result = []
+    if (response.status_code == 200):
+      response_json = response.json()
+      for item in response_json["results"]:
+        if (searchType == "album"):
+          if (item["wrapperType"] == "collection"):
+            result.append(item)
+        elif (searchType == "song"):
+          if (item["wrapperType"] == "track"):
+            result.append(item)
+    return result
+  except Exception as e:
+    print("Error: ",e)
 
 def on_db(item,table):
   try:

@@ -531,7 +531,7 @@ def add_album(index):
         if (not artistId):
           response = "Artist not on iTunes, no Albuns."
         else:
-          albuns = helpers.get_albuns_artist(artistId)
+          albuns = helpers.get_type_from_id(artistId, "album")
           dataToSave = []
           for album in albuns:
             if (album['collectionName'].lower() == newAlbum['name'].lower()):
@@ -583,7 +583,7 @@ def add_song(index):
         if (not albumId):
           response = "Album not on iTunes, no Songs."
         else:
-          songs = helpers.get_songs_artist(albumId)
+          songs = helpers.get_type_from_id(albumId,"song")
           dataToSave = []
           for song in songs:
             if (song['trackName'].lower() == newSong['name'].lower()):
@@ -629,7 +629,7 @@ def get_all_albuns_artist_itunes(index):
     else:  
       artistId = row[2]
       if (artistId):
-        albuns = helpers.get_albuns_artist(artistId)
+        albuns = helpers.get_type_from_id(artistId, "album")
         response = []
         for album in albuns:
           response.append(
@@ -659,7 +659,7 @@ def get_all_songs_artist_itunes(index):
     else:  
       artistId = row[2]
       if (artistId):
-        songs = helpers.get_songs_artist(artistId)
+        songs = helpers.get_type_from_id(artistId, "song")
         response = []
         for song in songs:
           response.append(
@@ -689,7 +689,7 @@ def get_all_songs_album_itunes(index):
     else:  
       albumId = row[5]
       if (albumId):
-        songs = helpers.get_songs_artist(albumId)
+        songs = helpers.get_type_from_id(albumId, "song")
         response = []
         for song in songs:
           response.append(
