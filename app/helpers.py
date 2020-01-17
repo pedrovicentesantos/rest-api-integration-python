@@ -122,9 +122,7 @@ def is_on_itunes(artist):
   onItunes = False
   try:
     id, name = get_artist_id(artist)
-    if (not id):
-      onItunes = False
-    else:
+    if (id):
       onItunes = True
     return (onItunes,id,name)
   except Exception as e:
