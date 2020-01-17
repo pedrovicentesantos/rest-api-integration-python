@@ -2,8 +2,7 @@ import pymysql
 from app import app
 import helpers
 from db_connect import connect_to_db
-from flask import jsonify
-from flask import flash, request
+from flask import flash, request, jsonify
 import json
 
 @app.errorhandler(404)
@@ -620,7 +619,6 @@ def add_song(index):
       cursor.close()
       connection.close()
 
-
 # Rotas iTunes
 @app.route('/artistas/<int:index>/albuns/itunes',methods=['GET'])
 def get_all_albuns_artist_itunes(index):
@@ -648,9 +646,7 @@ def get_all_albuns_artist_itunes(index):
         response = "Artist not on iTunes."
     response = jsonify(response)
     response.status_code = 200
-            
     return response
-          
   except Exception as e:
     print("Error: ", e)
 
@@ -680,7 +676,6 @@ def get_all_songs_artist_itunes(index):
         response = "Artist not on iTunes."
     response = jsonify(response)
     response.status_code = 200
-            
     return response
   except Exception as e:
     print("Error: ", e)
@@ -711,12 +706,9 @@ def get_all_songs_album_itunes(index):
         response = "Album not on iTunes."
     response = jsonify(response)
     response.status_code = 200
-            
     return response
   except Exception as e:
     print("Error: ", e)
-
-
 
 if __name__ == '__main__':
   app.run(debug=True,host = '0.0.0.0')
