@@ -168,7 +168,6 @@ def get_all_albuns_artist(index):
     response = jsonify(response)
     response.status_code = 200
     return response
-    
   except Exception as e:
     print("Error: ", e)
   finally:
@@ -184,11 +183,7 @@ def get_all_songs_artist(index):
       response = "Artist not on DB."
     else:  
       connection = connect_to_db()
-      # Fazer um JOIN pois tenho o id do artista
-      # Acho o artista na tabela de albuns e uso os ids dos albuns para achar as musicas
-      # sql = "SELECT * FROM songs WHERE id_album=%s"
       sql = "SELECT songs.* FROM songs INNER JOIN albuns ON albuns.idArtistAlbum=%s"
-      
       if (connection.is_connected()):
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql,(index,))
@@ -199,7 +194,6 @@ def get_all_songs_artist(index):
           response.append(dict(zip(row_headers,row)))  
     response = jsonify(response)
     response.status_code = 200
-            
     return response
   except Exception as e:
     print("Error: ", e)
@@ -217,7 +211,8 @@ def get_album_artist(index_artista,index_album):
     else:
       find, row = helpers.id_on_db(index_album,"albuns")
       if (find):
-        if (row[7]==index_artista):
+        # Checa se o album desejado pertence ao artista
+        if (row[7] == index_artista):
           response = {
             'idAlbum' : row[0],
             'nameAlbum' : row[1],
@@ -230,7 +225,6 @@ def get_album_artist(index_artista,index_album):
           }
         else:
           response = []
-        
       else:
         response = "Album not on DB."
     response = jsonify(response)
@@ -248,7 +242,7 @@ def get_song_artist(index_artista,index_musica):
     else:
       find, row = helpers.id_on_db(index_musica,"songs")
       if (find):
-        # Checar se a musica tem o id de um album que tem o id do artista
+        # Checa se a musica pertence a um album que pertence ao artista correto
         findAlbum, rowAlbum = helpers.id_on_db(row[7],"albuns")
         if (findAlbum):
           if (rowAlbum[7] == index_artista):
@@ -277,7 +271,7 @@ def get_all_albuns():
   try:
     sql = "SELECT * FROM albuns"
     connection = connect_to_db()
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor = connection.cursor(pymysql.cursors.DictCursor)
       cursor.execute(sql)
       rows = cursor.fetchall()
@@ -291,7 +285,7 @@ def get_all_albuns():
   except Exception as e:
     print("Error: ", e)
   finally:
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor.close()
       connection.close()
 
@@ -300,7 +294,7 @@ def get_all_songs():
   try:
     sql = "SELECT * FROM songs"
     connection = connect_to_db()
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor = connection.cursor(pymysql.cursors.DictCursor)
       cursor.execute(sql)
       rows = cursor.fetchall()
@@ -323,7 +317,7 @@ def get_album(index):
   try:
     connection = connect_to_db()
     sql = "SELECT * FROM albuns WHERE idAlbum=%s"
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor = connection.cursor(pymysql.cursors.DictCursor)
       cursor.execute(sql,(index,))
       row = cursor.fetchone()
@@ -333,15 +327,13 @@ def get_album(index):
         row_headers = [column_name[0] for column_name in cursor.description]
         response = []
         response.append(dict(zip(row_headers,row)))
-      
       response = jsonify(response)
       response.status_code = 200
-      
       return response
   except Exception as e:
     print("Error: ", e)
   finally:
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor.close()
       connection.close()
 
@@ -350,7 +342,7 @@ def get_song(index):
   try:
     connection = connect_to_db()
     sql = "SELECT * FROM songs WHERE idSong=%s"
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor = connection.cursor(pymysql.cursors.DictCursor)
       cursor.execute(sql,(index,))
       row = cursor.fetchone()
@@ -360,15 +352,13 @@ def get_song(index):
         row_headers = [column_name[0] for column_name in cursor.description]
         response = []
         response.append(dict(zip(row_headers,row)))
-      
       response = jsonify(response)
       response.status_code = 200
-      
       return response
   except Exception as e:
     print("Error: ", e)
   finally:
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor.close()
       connection.close()
 
@@ -393,7 +383,6 @@ def get_songs_album(index):
     response = jsonify(response)
     response.status_code = 200
     return response
-
   except Exception as e:
     print("Error: ", e)
   finally:
@@ -437,10 +426,11 @@ def delete_album(index):
       response = "Album not on DB."
     else:
       sql = "DELETE FROM albuns WHERE idAlbum=%s"
-      cursor = connection.cursor()
-      cursor.execute(sql,(index,))
-      connection.commit()
-      response = "Deletion successful."
+      if (connection.is_connected()):
+        cursor = connection.cursor()
+        cursor.execute(sql,(index,))
+        connection.commit()
+        response = "Deletion successful."
     response = jsonify(response)
     response.status_code = 200
     return response
