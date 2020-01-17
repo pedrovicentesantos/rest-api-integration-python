@@ -18,7 +18,7 @@ def get_artists():
   try:
     sql = "SELECT * FROM artists"
     connection = connect_to_db()
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor = connection.cursor(pymysql.cursors.DictCursor)
       cursor.execute(sql)
       rows = cursor.fetchall()
@@ -32,7 +32,7 @@ def get_artists():
   except Exception as e:
     print("Error: ", e)
   finally:
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor.close()
       connection.close()
 
@@ -41,7 +41,7 @@ def get_artist(index):
   try:
     connection = connect_to_db()
     sql = "SELECT * FROM artists WHERE idArtist=%s"
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor = connection.cursor(pymysql.cursors.DictCursor)
       cursor.execute(sql,(index,))
       row = cursor.fetchone()
@@ -51,15 +51,13 @@ def get_artist(index):
         row_headers = [column_name[0] for column_name in cursor.description]
         response = []
         response.append(dict(zip(row_headers,row)))
-      
       response = jsonify(response)
       response.status_code = 200
-      
       return response
   except Exception as e:
     return jsonify("Error: ", e)
   finally:
-    if connection.is_connected():
+    if (connection.is_connected()):
       cursor.close()
       connection.close()
 
@@ -98,28 +96,26 @@ def update_artist(index):
   
 @app.route('/artistas/<int:index>', methods=['DELETE'])
 def delete_artist(index):
-    try:
-      find, _ = helpers.id_on_db(index,"artists")
-      if (not find):
-        response = jsonify("Artist not on DB.")
-      else:    
-        sql = "DELETE FROM artists WHERE idArtist = %s"
-        connection = connect_to_db()
-        if connection.is_connected():
-          cursor = connection.cursor()
-          cursor.execute(sql,(index,))
-          connection.commit()
-          response = jsonify("Deletion successful.")
-        
-      response.status_code = 200
-        
-      return response
-    except Exception as e:
-      print("Error: ", e)
-    finally:
-      if (find and connection.is_connected()):
-        cursor.close()
-        connection.close()
+  try:
+    find, _ = helpers.id_on_db(index,"artists")
+    if (not find):
+      response = jsonify("Artist not on DB.")
+    else:    
+      sql = "DELETE FROM artists WHERE idArtist = %s"
+      connection = connect_to_db()
+      if (connection.is_connected()):
+        cursor = connection.cursor()
+        cursor.execute(sql,(index,))
+        connection.commit()
+        response = jsonify("Deletion successful.")
+    response.status_code = 200
+    return response
+  except Exception as e:
+    print("Error: ", e)
+  finally:
+    if (find and connection.is_connected()):
+      cursor.close()
+      connection.close()
 
 @app.route('/artistas', methods=['POST'])
 def add_artist():
@@ -135,11 +131,12 @@ def add_artist():
       if (not onItunes):
         id = None
         name = artist['name']
-      sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
-      data = (name,id)
-      cursor.execute(sql,data)
-      connection.commit()
-      response = jsonify("Added successful.")
+      if (connection.is_connected()):
+        sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
+        data = (name,id)
+        cursor.execute(sql,data)
+        connection.commit()
+        response = jsonify("Added successful.")
     response.status_code = 200
         
     return response
