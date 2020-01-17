@@ -465,11 +465,10 @@ def delete_song(index):
       cursor.close()
       connection.close()
       
-
 @app.route('/albuns/<int:index_album>/musicas/<int:index_musica>',methods=['DELETE'])
 def delete_song_album(index_album,index_musica):
   try:
-    find,_=helpers.id_on_db(index_album,"albuns")
+    find,_ = helpers.id_on_db(index_album,"albuns")
     if (not find):
       response = "Album not on DB."
     else:
@@ -478,11 +477,12 @@ def delete_song_album(index_album,index_musica):
         response = "Song not on DB."
       else:
         connection = connect_to_db()
-        sql = "DELETE FROM songs WHERE idSong=%s"
-        cursor = connection.cursor()
-        cursor.execute(sql,(index_musica,))
-        connection.commit()
-        response = "Deletion successful."
+        if (connection.is_connected()):
+          sql = "DELETE FROM songs WHERE idSong=%s"
+          cursor = connection.cursor()
+          cursor.execute(sql,(index_musica,))
+          connection.commit()
+          response = "Deletion successful."
     response = jsonify(response)
     response.status_code = 200
     return response
