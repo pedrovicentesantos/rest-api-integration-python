@@ -578,47 +578,41 @@ def add_song(index):
       response = "Album not on DB."
     else:
       connection = connect_to_db()
-      cursor = connection.cursor()
-      albumId = row[5]
-      if (not albumId):
-        response = "Album not on iTunes, no Songs."
-      else:
-
-        songs = helpers.get_songs_artist(albumId)
-        dataToSave = []
-        for song in songs:
-          
-          if (song['trackName'].lower() == newSong['name'].lower()):
-            dataToSave.append({
-                'nameSong' : song['trackName'],
-                'explicit' : song['trackExplicitness'],
-                'genre' : song['primaryGenreName'],
-                'idSongItunes' : song['trackId'],
-                'nameArtistSong' : song['artistName'],
-                'nameAlbumSong' : song['collectionName'],
-                'artistIdItunes' : song['artistId']
-            }) 
-            
-            break
-        if (not dataToSave):
-          response = "Song not on iTunes."
+      if (connection.is_connected()):
+        cursor = connection.cursor()
+        albumId = row[5]
+        if (not albumId):
+          response = "Album not on iTunes, no Songs."
         else:
-          # Ver se album já está no BD
-          findSong = helpers.on_db(dataToSave[0]['idSongItunes'],"songs")
-          
-          if (findSong):
-            response = "Song already on DB."
+          songs = helpers.get_songs_artist(albumId)
+          dataToSave = []
+          for song in songs:
+            if (song['trackName'].lower() == newSong['name'].lower()):
+              dataToSave.append({
+                  'nameSong' : song['trackName'],
+                  'explicit' : song['trackExplicitness'],
+                  'genre' : song['primaryGenreName'],
+                  'idSongItunes' : song['trackId'],
+                  'nameArtistSong' : song['artistName'],
+                  'nameAlbumSong' : song['collectionName'],
+                  'artistIdItunes' : song['artistId']
+              }) 
+              break
+          if (not dataToSave):
+            response = "Song not on iTunes."
           else:
-            
-            sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            data = (dataToSave[0]['nameSong'],dataToSave[0]['genre'],dataToSave[0]['explicit'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
-            cursor.execute(sql,data)
-            connection.commit()
-            response = "Added successful."
+            findSong = helpers.on_db(dataToSave[0]['idSongItunes'],"songs")
+            if (findSong):
+              response = "Song already on DB."
+            else:
+              sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+              data = (dataToSave[0]['nameSong'],dataToSave[0]['genre'],dataToSave[0]['explicit'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
+              cursor.execute(sql,data)
+              connection.commit()
+              response = "Added successful."
     response = jsonify(response)     
     response.status_code = 200
     return response
-
   except Exception as e:
     print("Error: ", e)
   finally:
