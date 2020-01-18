@@ -536,53 +536,56 @@ def delete_songs_album(index):
 def add_album(index):
   try:
     newAlbum = request.get_json()
-    findArtist, row = helpers.id_on_db(index,"artists")
-    if (not findArtist):
-      response = "Artist not on DB."
+    if (not newAlbum):
+      response = "No Body in request."
     else:
-      connection = connect_to_db()
-      if (connection.is_connected()):
-        cursor = connection.cursor()
-        artistId = row[2]
-        if (not artistId):
-          response = "Artist not on iTunes, no Albuns."
-        else:
-          albuns = helpers.get_type_from_id(artistId, "album")
-          if (type(albuns) == str):
-            response = albuns
+      findArtist, row = helpers.id_on_db(index,"artists")
+      if (not findArtist):
+        response = "Artist not on DB."
+      else:
+        connection = connect_to_db()
+        if (connection.is_connected()):
+          cursor = connection.cursor()
+          artistId = row[2]
+          if (not artistId):
+            response = "Artist not on iTunes, no Albuns."
           else:
-            dataToSave = []
-            for album in albuns:
-              if (album['collectionName'].lower() == newAlbum['name'].lower()):
-                dataToSave.append({
-                    'nameAlbum' : album['collectionName'],
-                    'trackCount' : album['trackCount'],
-                    'explicit' : album['collectionExplicitness'],
-                    'genre' : album['primaryGenreName'],
-                    'idAlbumItunes' : album['collectionId'],
-                    'nameArtistAlbum' : album['artistName'],
-                    'artistIdItunes' : album['artistId']
-                }) 
-                break
-            if (not dataToSave):
-              response = "Album not on iTunes."
+            albuns = helpers.get_type_from_id(artistId, "album")
+            if (type(albuns) == str):
+              response = albuns
             else:
-              findAlbum = helpers.on_db(dataToSave[0]['idAlbumItunes'],"albuns")
-              if (findAlbum):
-                response = "Album already on DB."
+              dataToSave = []
+              for album in albuns:
+                if (album['collectionName'].lower() == newAlbum['name'].lower()):
+                  dataToSave.append({
+                      'nameAlbum' : album['collectionName'],
+                      'trackCount' : album['trackCount'],
+                      'explicit' : album['collectionExplicitness'],
+                      'genre' : album['primaryGenreName'],
+                      'idAlbumItunes' : album['collectionId'],
+                      'nameArtistAlbum' : album['artistName'],
+                      'artistIdItunes' : album['artistId']
+                  }) 
+                  break
+              if (not dataToSave):
+                response = "Album not on iTunes."
               else:
-                sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                data = (dataToSave[0]['nameAlbum'],dataToSave[0]['trackCount'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idAlbumItunes'],dataToSave[0]['nameArtistAlbum'],index)
-                cursor.execute(sql,data)
-                connection.commit()
-                response = "Added successful."
+                findAlbum = helpers.on_db(dataToSave[0]['idAlbumItunes'],"albuns")
+                if (findAlbum):
+                  response = "Album already on DB."
+                else:
+                  sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                  data = (dataToSave[0]['nameAlbum'],dataToSave[0]['trackCount'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idAlbumItunes'],dataToSave[0]['nameArtistAlbum'],index)
+                  cursor.execute(sql,data)
+                  connection.commit()
+                  response = "Added successful."
     response = jsonify(response)     
     response.status_code = 200
     return response
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (findArtist and connection.is_connected()):
+    if (newAlbum and findArtist and connection.is_connected()):
       cursor.close()
       connection.close()
 
