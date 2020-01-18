@@ -65,7 +65,7 @@ def update_artist(index):
   try:
     artist = request.get_json()
     if (not artist):
-      response = jsonify("No Body in request")
+      response = jsonify("No Body in request.")
     else:
       find, _ = helpers.id_on_db(index,"artists")
       if (not find):
@@ -129,36 +129,37 @@ def delete_artist(index):
 def add_artist():
   try:
     artist = request.get_json()
-    connection = connect_to_db()
-    cursor = connection.cursor()
-    find = helpers.on_db(artist,"artists")
-    if (find):
-      response = jsonify("Artist already on DB.")
+    if (not artist):
+      response = jsonify("No Body in request.")
     else:
-      result = helpers.is_on_itunes(artist['name'])
-      if (type(result) == str):
-        response = jsonify(result)
+      connection = connect_to_db()
+      cursor = connection.cursor()
+      find = helpers.on_db(artist,"artists")
+      if (find):
+        response = jsonify("Artist already on DB.")
       else:
-        if (not result[0]):
-          id = None
-          name = artist['name']
+        result = helpers.is_on_itunes(artist['name'])
+        if (type(result) == str):
+          response = jsonify(result)
         else:
-          id = result[1]
-          name = result[2]
-        if (connection.is_connected()):
-          sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
-          data = (name,id)
-          cursor.execute(sql,data)
-          connection.commit()
-          response = jsonify("Added successful.")
+          if (not result[0]):
+            id = None
+            name = artist['name']
+          else:
+            id = result[1]
+            name = result[2]
+          if (connection.is_connected()):
+            sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
+            data = (name,id)
+            cursor.execute(sql,data)
+            connection.commit()
+            response = jsonify("Added successful.")
     response.status_code = 200
-        
     return response
-      
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (connection.is_connected()):
+    if (artist and connection.is_connected()):
       cursor.close()
       connection.close()
 
