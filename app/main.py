@@ -64,8 +64,12 @@ def get_artist(index):
 def update_artist(index):
   try:
     artist = request.get_json()
+    noParamName = False
     if (not artist):
       response = jsonify("No Body in request.")
+    elif ("name" not in artist.keys()):
+      noParamName = True
+      response = jsonify("No name parameter in request body.")
     else:
       find, _ = helpers.id_on_db(index,"artists")
       if (not find):
@@ -98,7 +102,7 @@ def update_artist(index):
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (artist and find and type(result) != str and connection.is_connected()):
+    if (artist and not noParamName and find and type(result) != str and connection.is_connected()):
       cursor.close()
       connection.close()
   
