@@ -133,10 +133,11 @@ def add_artist():
         if (not result[0]):
           id = None
           name = artist['name']
-        if (connection.is_connected()):
-          sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
+        else:
           id = result[1]
           name = result[2]
+        if (connection.is_connected()):
+          sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
           data = (name,id)
           cursor.execute(sql,data)
           connection.commit()
