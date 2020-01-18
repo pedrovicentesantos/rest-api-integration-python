@@ -536,8 +536,16 @@ def delete_songs_album(index):
 def add_album(index):
   try:
     newAlbum = request.get_json()
+    noParamName = False
+    inputNotString = False
     if (not newAlbum):
       response = "No Body in request."
+    elif ("name" not in newAlbum.keys()):
+      noParamName = True
+      response = "No name parameter in request body."
+    elif (type(newAlbum["name"]) != str):
+      inputNotString = True
+      response = "Name parameter must be str type."
     else:
       findArtist, row = helpers.id_on_db(index,"artists")
       if (not findArtist):
@@ -585,7 +593,7 @@ def add_album(index):
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (newAlbum and findArtist and connection.is_connected()):
+    if (newAlbum and not noParamName and not inputNotString and findArtist and connection.is_connected()):
       cursor.close()
       connection.close()
 
