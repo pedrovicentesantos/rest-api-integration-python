@@ -1,0 +1,76 @@
+import unittest
+
+from helpers import get_artist_id, get_type_from_id
+
+class HelpersTestCase(unittest.TestCase):
+  # Testes para função: get_artist_id(id)
+  def test_get_artist_id_type_response_artist_found(self):
+    result = get_artist_id("dua lipa")
+    self.assertIsInstance(result,tuple)
+
+  def test_get_artist_id_type_response_artist_not_found(self):
+    result = get_artist_id("marilia asdsa")
+    self.assertIsInstance(result,tuple)
+
+  def test_get_artist_id_type_response_input_not_str(self):
+    result = get_artist_id(2)
+    self.assertIsInstance(result,str)
+    self.assertNotIsInstance(result,tuple)
+
+    result = get_artist_id((2,1))
+    self.assertIsInstance(result,str)
+    self.assertNotIsInstance(result,tuple)
+
+    result = get_artist_id({"argument"})
+    self.assertIsInstance(result,str)
+    self.assertNotIsInstance(result,tuple)
+  
+  def test_get_artist_id_type_response_results(self):
+    result = get_artist_id("marilia asdsa")
+    for r in result:
+      self.assertIsInstance(r, str)
+
+    result = get_artist_id("dua lipa")
+    self.assertIsInstance(result[0],int)
+    self.assertIsInstance(result[1],str)
+
+  # Testes para função: get_type_from_id(id, searchType)
+  def test_get_type_from_id_search_artist_found(self):
+    result = get_type_from_id(1031397873,"song")
+    self.assertIsInstance(result, list)
+
+    result = get_type_from_id(1031397873,"album")
+    self.assertIsInstance(result, list)
+
+  def test_get_type_from_id_search_albuns_artist_not_found(self):
+    result = get_type_from_id(2,"album")
+    self.assertIsInstance(result, list)
+
+    result = get_type_from_id(2,"song")
+    self.assertIsInstance(result, list)
+
+  def test_get_type_from_id_search_input_searchType_not_str(self):
+    result = get_type_from_id(1031397873,2)
+    self.assertIsInstance(result, str)
+
+    result = get_type_from_id(1031397873,(2,1))
+    self.assertIsInstance(result, str)
+
+    result = get_type_from_id(1031397873,{(2,1)})
+    self.assertIsInstance(result, str)
+
+    result = get_type_from_id(1,3)
+    self.assertIsInstance(result, str)
+
+  def test_get_type_from_id_wrong_url(self):
+    result = get_type_from_id("teste", "album")
+    self.assertIsInstance(result,str)
+
+    result = get_type_from_id(("teste",1), "album")
+    self.assertIsInstance(result,str)
+
+    result = get_type_from_id({("teste",1)}, "song")
+    self.assertIsInstance(result,str)
+
+if __name__ == '__main__':
+    unittest.main()

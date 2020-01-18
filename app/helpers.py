@@ -26,7 +26,6 @@ def get_type_from_id(id, searchType):
     url = "https://itunes.apple.com/lookup?limit=200&entity=" + searchType
     url += "&id="
     url += str(id)
-    print(url)
     response = requests.get(url)
     result = []
     if (response.status_code == 200):
@@ -47,9 +46,7 @@ def on_db(item,table):
     find = False
     connection = connect_to_db()
     if(table=="artists"):
-      # find = False
       sql = "SELECT * FROM artists"
-      # connection = connect_to_db()
       if connection.is_connected():
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql)
@@ -58,16 +55,13 @@ def on_db(item,table):
           if(row[1].lower() == item['name'].lower()):
             find = True
             break
-    
     elif (table=="albuns"):
       sql = "SELECT idAlbumItunes FROM albuns"
       if (connection.is_connected()):
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql)
         rows = cursor.fetchall()
-        
         for row in rows:
-          
           if (row[0] == item):
             find = True
             break
@@ -77,9 +71,7 @@ def on_db(item,table):
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql)
         rows = cursor.fetchall()
-        
         for row in rows:
-          
           if (row[0] == item):
             find = True
             break
