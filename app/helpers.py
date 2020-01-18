@@ -19,7 +19,6 @@ def get_artist_id(artist):
             break
     return artistId,artistName
   except Exception as e:
-	  # print("Error: ",e)
     return "Error: " + str(e)
 
 def get_type_from_id(id, searchType):
@@ -115,7 +114,7 @@ def is_on_itunes(artist):
   try:
     result = get_artist_id(artist)
     if (type(result) == str):
-      return (onItunes,result,"")
+      return result
     if (result[0]):
       onItunes = True
     return (onItunes,result[0],result[1])

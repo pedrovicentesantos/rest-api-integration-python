@@ -126,16 +126,21 @@ def add_artist():
     if (find):
       response = jsonify("Artist already on DB.")
     else:
-      onItunes, id, name = helpers.is_on_itunes(artist['name'])
-      if (not onItunes):
-        id = None
-        name = artist['name']
-      if (connection.is_connected()):
-        sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
-        data = (name,id)
-        cursor.execute(sql,data)
-        connection.commit()
-        response = jsonify("Added successful.")
+      result = helpers.is_on_itunes(artist['name'])
+      if (type(result) == str):
+        response = jsonify(result)
+      else:
+        if (not result[0]):
+          id = None
+          name = artist['name']
+        if (connection.is_connected()):
+          sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
+          id = result[1]
+          name = result[2]
+          data = (name,id)
+          cursor.execute(sql,data)
+          connection.commit()
+          response = jsonify("Added successful.")
     response.status_code = 200
         
     return response
