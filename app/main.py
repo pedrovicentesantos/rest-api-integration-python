@@ -601,8 +601,16 @@ def add_album(index):
 def add_song(index):
   try:
     newSong = request.get_json()
+    noParamName = False
+    inputNotString = False
     if (not newSong):
       response = "No Body in request."
+    elif ("name" not in newSong.keys()):
+      noParamName = True
+      response = "No name parameter in request body."
+    elif (type(newSong["name"]) != str):
+      inputNotString = True
+      response = "Name parameter must be str type."
     else:
       findAlbum, row = helpers.id_on_db(index,"albuns")
       if (not findAlbum):
@@ -650,7 +658,7 @@ def add_song(index):
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (newSong and findAlbum and connection.is_connected()):
+    if (newSong and not noParamName and not inputNotString and findAlbum and connection.is_connected()):
       cursor.close()
       connection.close()
 
