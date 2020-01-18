@@ -544,32 +544,34 @@ def add_album(index):
           response = "Artist not on iTunes, no Albuns."
         else:
           albuns = helpers.get_type_from_id(artistId, "album")
-          dataToSave = []
-          for album in albuns:
-            if (album['collectionName'].lower() == newAlbum['name'].lower()):
-              dataToSave.append({
-                  'nameAlbum' : album['collectionName'],
-                  'trackCount' : album['trackCount'],
-                  'explicit' : album['collectionExplicitness'],
-                  'genre' : album['primaryGenreName'],
-                  'idAlbumItunes' : album['collectionId'],
-                  'nameArtistAlbum' : album['artistName'],
-                  'artistIdItunes' : album['artistId']
-              }) 
-              break
-          if (not dataToSave):
-            response = "Album not on iTunes."
+          if (type(albuns) == str):
+            response = albuns
           else:
-            findAlbum = helpers.on_db(dataToSave[0]['idAlbumItunes'],"albuns")
-            if (findAlbum):
-              response = "Album already on DB."
+            dataToSave = []
+            for album in albuns:
+              if (album['collectionName'].lower() == newAlbum['name'].lower()):
+                dataToSave.append({
+                    'nameAlbum' : album['collectionName'],
+                    'trackCount' : album['trackCount'],
+                    'explicit' : album['collectionExplicitness'],
+                    'genre' : album['primaryGenreName'],
+                    'idAlbumItunes' : album['collectionId'],
+                    'nameArtistAlbum' : album['artistName'],
+                    'artistIdItunes' : album['artistId']
+                }) 
+                break
+            if (not dataToSave):
+              response = "Album not on iTunes."
             else:
-              
-              sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-              data = (dataToSave[0]['nameAlbum'],dataToSave[0]['trackCount'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idAlbumItunes'],dataToSave[0]['nameArtistAlbum'],index)
-              cursor.execute(sql,data)
-              connection.commit()
-              response = "Added successful."
+              findAlbum = helpers.on_db(dataToSave[0]['idAlbumItunes'],"albuns")
+              if (findAlbum):
+                response = "Album already on DB."
+              else:
+                sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                data = (dataToSave[0]['nameAlbum'],dataToSave[0]['trackCount'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idAlbumItunes'],dataToSave[0]['nameArtistAlbum'],index)
+                cursor.execute(sql,data)
+                connection.commit()
+                response = "Added successful."
     response = jsonify(response)     
     response.status_code = 200
     return response
@@ -596,31 +598,34 @@ def add_song(index):
           response = "Album not on iTunes, no Songs."
         else:
           songs = helpers.get_type_from_id(albumId,"song")
-          dataToSave = []
-          for song in songs:
-            if (song['trackName'].lower() == newSong['name'].lower()):
-              dataToSave.append({
-                  'nameSong' : song['trackName'],
-                  'explicit' : song['trackExplicitness'],
-                  'genre' : song['primaryGenreName'],
-                  'idSongItunes' : song['trackId'],
-                  'nameArtistSong' : song['artistName'],
-                  'nameAlbumSong' : song['collectionName'],
-                  'artistIdItunes' : song['artistId']
-              }) 
-              break
-          if (not dataToSave):
-            response = "Song not on iTunes."
+          if (type(songs) == str):
+            response = songs
           else:
-            findSong = helpers.on_db(dataToSave[0]['idSongItunes'],"songs")
-            if (findSong):
-              response = "Song already on DB."
+            dataToSave = []
+            for song in songs:
+              if (song['trackName'].lower() == newSong['name'].lower()):
+                dataToSave.append({
+                    'nameSong' : song['trackName'],
+                    'explicit' : song['trackExplicitness'],
+                    'genre' : song['primaryGenreName'],
+                    'idSongItunes' : song['trackId'],
+                    'nameArtistSong' : song['artistName'],
+                    'nameAlbumSong' : song['collectionName'],
+                    'artistIdItunes' : song['artistId']
+                }) 
+                break
+            if (not dataToSave):
+              response = "Song not on iTunes."
             else:
-              sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-              data = (dataToSave[0]['nameSong'],dataToSave[0]['genre'],dataToSave[0]['explicit'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
-              cursor.execute(sql,data)
-              connection.commit()
-              response = "Added successful."
+              findSong = helpers.on_db(dataToSave[0]['idSongItunes'],"songs")
+              if (findSong):
+                response = "Song already on DB."
+              else:
+                sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                data = (dataToSave[0]['nameSong'],dataToSave[0]['genre'],dataToSave[0]['explicit'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
+                cursor.execute(sql,data)
+                connection.commit()
+                response = "Added successful."
     response = jsonify(response)     
     response.status_code = 200
     return response
@@ -642,18 +647,21 @@ def get_all_albuns_artist_itunes(index):
       artistId = row[2]
       if (artistId):
         albuns = helpers.get_type_from_id(artistId, "album")
-        response = []
-        for album in albuns:
-          response.append(
-            {
-              'nameArtistAlbum' : album['artistName'],
-              'nameAlbum' : album['collectionName'],
-              'trackCount' : album['trackCount'],
-              'explicit' : album['collectionExplicitness'],
-              'genre' : album['primaryGenreName'],
-              'idAlbumItunes' : album['collectionId']
-            }
-          )
+        if (type(albuns) == str):
+          response = albuns
+        else:
+          response = []
+          for album in albuns:
+            response.append(
+              {
+                'nameArtistAlbum' : album['artistName'],
+                'nameAlbum' : album['collectionName'],
+                'trackCount' : album['trackCount'],
+                'explicit' : album['collectionExplicitness'],
+                'genre' : album['primaryGenreName'],
+                'idAlbumItunes' : album['collectionId']
+              }
+            )
       else:
         response = "Artist not on iTunes."
     response = jsonify(response)
@@ -672,18 +680,21 @@ def get_all_songs_artist_itunes(index):
       artistId = row[2]
       if (artistId):
         songs = helpers.get_type_from_id(artistId, "song")
-        response = []
-        for song in songs:
-          response.append(
-            {
-              'nameArtistSong' : song['artistName'],
-              'nameAlbumSong' : song['collectionName'],
-              'nameSong' : song['trackName'],
-              'explicit' : song['trackExplicitness'],
-              'genre' : song['primaryGenreName'],
-              'idSongItunes' : song['trackId']
-            }
-          )
+        if (type(songs) == str):
+          response = songs
+        else:
+          response = []
+          for song in songs:
+            response.append(
+              {
+                'nameArtistSong' : song['artistName'],
+                'nameAlbumSong' : song['collectionName'],
+                'nameSong' : song['trackName'],
+                'explicit' : song['trackExplicitness'],
+                'genre' : song['primaryGenreName'],
+                'idSongItunes' : song['trackId']
+              }
+            )
       else:
         response = "Artist not on iTunes."
     response = jsonify(response)
@@ -702,18 +713,21 @@ def get_all_songs_album_itunes(index):
       albumId = row[5]
       if (albumId):
         songs = helpers.get_type_from_id(albumId, "song")
-        response = []
-        for song in songs:
-          response.append(
-            {
-              'nameArtistSong' : song['artistName'],
-              'nameAlbumSong' : song['collectionName'],
-              'nameSong' : song['trackName'],
-              'explicit' : song['trackExplicitness'],
-              'genre' : song['primaryGenreName'],
-              'idSongItunes' : song['trackId']
-            }
-          )
+        if (type(songs) == str):
+          response = songs
+        else:
+          response = []
+          for song in songs:
+            response.append(
+              {
+                'nameArtistSong' : song['artistName'],
+                'nameAlbumSong' : song['collectionName'],
+                'nameSong' : song['trackName'],
+                'explicit' : song['trackExplicitness'],
+                'genre' : song['primaryGenreName'],
+                'idSongItunes' : song['trackId']
+              }
+            )
       else:
         response = "Album not on iTunes."
     response = jsonify(response)

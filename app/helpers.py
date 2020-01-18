@@ -37,9 +37,11 @@ def get_type_from_id(id, searchType):
         elif (searchType == "song"):
           if (item["wrapperType"] == "track"):
             result.append(item)
+    else:
+      result = "Error in URL, check input parameters."
     return result
   except Exception as e:
-    print("Error: ",e)
+    return "Error: " + str(e)
 
 def on_db(item,table):
   try:
