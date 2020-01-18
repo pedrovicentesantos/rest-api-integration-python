@@ -68,28 +68,34 @@ def update_artist(index):
     if (not find):
       response = jsonify("Artist not on DB.")
     else:
-      onItunes, id, name = helpers.is_on_itunes(artist['name'])
-      connection = connect_to_db()
-      if (connection.is_connected()):
-        cursor = connection.cursor()
-        if (not onItunes):
-          id = None
-          name = artist['name']
-        findNameArtist = helpers.on_db(artist,"artists")
-        if (not findNameArtist):
-          sql = "UPDATE artists SET nameArtist = %s, idArtistItunes=%s WHERE idArtist= %s"
-          data = (name,id,index)
-          cursor.execute(sql,data)
-          connection.commit()
-          response = jsonify("Update successful.")  
-        else:
-          response = jsonify("Artist already on DB.")  
+      result = helpers.is_on_itunes(artist['name'])
+      if (type(result) == str):
+        response = jsonify(result)
+      else:
+        connection = connect_to_db()
+        if (connection.is_connected()):
+          cursor = connection.cursor()
+          if (not result[0]):
+            id = None
+            name = artist['name']
+          else:
+            id = result[1]
+            name = result[2]
+          findNameArtist = helpers.on_db(artist,"artists")
+          if (not findNameArtist):
+            sql = "UPDATE artists SET nameArtist = %s, idArtistItunes=%s WHERE idArtist= %s"
+            data = (name,id,index)
+            cursor.execute(sql,data)
+            connection.commit()
+            response = jsonify("Update successful.")  
+          else:
+            response = jsonify("Artist already on DB.")  
     response.status_code = 200
     return response
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (find and connection.is_connected()):
+    if (find and type(result) != str and connection.is_connected()):
       cursor.close()
       connection.close()
   
