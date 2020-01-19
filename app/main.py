@@ -800,5 +800,24 @@ def get_all_songs_album_itunes(index):
   except Exception as e:
     print("Error: ", e)
 
+@app.route('/artistas', methods=['DELETE'])
+def delete_all_artists():
+  try:
+    sql = "DELETE FROM artists"
+    connection = connect_to_db()
+    if (connection.is_connected()):
+      cursor = connection.cursor()
+      cursor.execute(sql)
+      connection.commit()
+      response = jsonify("Deletion successful")
+      response.status_code = 204
+      return response
+  except Exception as e:
+    return "Error: " + str(e)
+  finally:
+    if (connection.is_connected()):
+      cursor.close()
+      connection.close()
+
 if __name__ == '__main__':
   app.run(debug=True,host = '0.0.0.0')
