@@ -29,7 +29,9 @@ def get_artists():
       response.status_code = 200
       return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response 
   finally:
     if (connection.is_connected()):
       cursor.close()
@@ -45,7 +47,7 @@ def get_artist(index):
       cursor.execute(sql,(index,))
       row = cursor.fetchone()
       if (not row):
-        response = "Artist not on DB."
+        response = []
       else:
         row_headers = [column_name[0] for column_name in cursor.description]
         response = []
@@ -54,7 +56,9 @@ def get_artist(index):
       response.status_code = 200
       return response
   except Exception as e:
-    return jsonify("Error: ", e)
+    response = jsonify("Error: ", e)
+    response.status_code = 400
+    return response
   finally:
     if (connection.is_connected()):
       cursor.close()
@@ -67,17 +71,21 @@ def update_artist(index):
     noParamName = False
     if (not artist):
       response = jsonify("No Body in request.")
+      response.status_code = 400
     elif ("name" not in artist.keys()):
       noParamName = True
       response = jsonify("No name parameter in request body.")
+      response.status_code = 400
     else:
       find, _ = helpers.id_on_db(index,"artists")
       if (not find):
         response = jsonify("Artist not on DB.")
+        response.status_code = 404
       else:
         result = helpers.is_on_itunes(artist['name'])
         if (type(result) == str):
           response = jsonify(result)
+          response.status_code = 400
         else:
           connection = connect_to_db()
           if (connection.is_connected()):
@@ -110,9 +118,10 @@ def update_artist(index):
               cursor.execute(sql,data)
               connection.commit()
               response = jsonify("Update successful.")  
+              response.status_code = 200
             else:
               response = jsonify("Artist already on DB.")  
-    response.status_code = 200
+              response.status_code = 200
     return response
   except Exception as e:
     print("Error: ", e)
