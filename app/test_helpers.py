@@ -127,5 +127,12 @@ class HelpersTestCase(unittest.TestCase):
     self.assertIsInstance(result,str)
     self.assertRegex(result,"Error:*")
 
+    # Quando ocorre uma exceção
+    mock.side_effect = Exception()
+    result = connect_to_db()
+    self.assertRaises(Exception)
+    self.assertIsInstance(result,str)
+    self.assertRegex(result,"Error:*")
+
 if __name__ == '__main__':
     unittest.main()
