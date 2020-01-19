@@ -11,5 +11,5 @@ def connect_to_db():
     if (connection.is_connected()):
       return connection
   except Exception as e:
-    print("Error: ", e)
+    return "Error when connecting: " + str(e)
   
