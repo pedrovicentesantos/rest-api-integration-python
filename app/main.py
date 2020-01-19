@@ -544,7 +544,8 @@ def delete_album(index):
     connection = connect_to_db()
     find, _= helpers.id_on_db(index,"albuns")
     if (not find):
-      response = "Album not on DB."
+      response = jsonify("Album not on DB.")
+      response.status_code = 404
     else:
       sql = "DELETE FROM albuns WHERE idAlbum=%s"
       if (connection.is_connected()):
@@ -552,11 +553,13 @@ def delete_album(index):
         cursor.execute(sql,(index,))
         connection.commit()
         response = "Deletion successful."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify(response)
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (find and connection.is_connected()):
       cursor.close()
@@ -568,7 +571,8 @@ def delete_song(index):
     connection = connect_to_db()
     find, _= helpers.id_on_db(index,"songs")
     if (not find):
-      response = "Song not on DB."
+      response = jsonify("Song not on DB.")
+      response.status_code = 404
     else:
       sql = "DELETE FROM songs WHERE idSong=%s"
       if (connection.is_connected()):
@@ -576,11 +580,13 @@ def delete_song(index):
         cursor.execute(sql,(index,))
         connection.commit()
         response = "Deletion successful."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify(response)
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (find and connection.is_connected()):
       cursor.close()
@@ -591,26 +597,35 @@ def delete_song_album(index_album,index_musica):
   try:
     find,_ = helpers.id_on_db(index_album,"albuns")
     if (not find):
-      response = "Album not on DB."
+      response = jsonify("Album not on DB.")
+      response.status_code = 404
     else:
-      find,_ = helpers.id_on_db(index_musica,"songs")
-      if(not find):
-        response = "Song not on DB."
+      findSong, row = helpers.id_on_db(index_musica,"songs")
+      if(not findSong):
+        response = jsonify("Song not on DB.")
+        response.status_code = 404
       else:
-        connection = connect_to_db()
-        if (connection.is_connected()):
-          sql = "DELETE FROM songs WHERE idSong=%s"
-          cursor = connection.cursor()
-          cursor.execute(sql,(index_musica,))
-          connection.commit()
-          response = "Deletion successful."
-    response = jsonify(response)
-    response.status_code = 200
+        if (row[7] == index_album):
+          connection = connect_to_db()
+          if (connection.is_connected()):
+            sql = "DELETE FROM songs WHERE idSong=%s"
+            cursor = connection.cursor()
+            cursor.execute(sql,(index_musica,))
+            connection.commit()
+            response = "Deletion successful."
+            response = jsonify(response)
+            response.status_code = 200
+        else:
+          response = "Song not from album."
+          response = jsonify(response)
+          response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
-    if (find and connection.is_connected()):
+    if (find and findSong and row[7] == index_album and connection.is_connected()):
       cursor.close()
       connection.close()
 
