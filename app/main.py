@@ -136,6 +136,7 @@ def delete_artist(index):
     find, _ = helpers.id_on_db(index,"artists")
     if (not find):
       response = jsonify("Artist not on DB.")
+      response.status_code = 404
     else:    
       sql = "DELETE FROM artists WHERE idArtist = %s"
       connection = connect_to_db()
@@ -144,10 +145,12 @@ def delete_artist(index):
         cursor.execute(sql,(index,))
         connection.commit()
         response = jsonify("Deletion successful.")
-    response.status_code = 200
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (find and connection.is_connected()):
       cursor.close()
