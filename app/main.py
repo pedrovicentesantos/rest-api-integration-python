@@ -634,7 +634,8 @@ def delete_songs_album(index):
   try:
     find,_ = helpers.id_on_db(index,"albuns")
     if (not find):
-      response = "Album not on DB."
+      response = jsonify("Album not on DB.")
+      response.status_code = 404
     else:
       connection = connect_to_db()
       sql = "DELETE FROM songs WHERE idAlbumSong=%s"
@@ -643,11 +644,13 @@ def delete_songs_album(index):
         cursor.execute(sql,(index,))
         connection.commit()
         response = "Deletion successful."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify(response)
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (find and connection.is_connected()):
       cursor.close()
@@ -660,28 +663,35 @@ def add_album(index):
     noParamName = False
     inputNotString = False
     if (not newAlbum):
-      response = "No Body in request."
+      response = jsonify("No Body in request.")
+      response.status_code = 400
     elif ("name" not in newAlbum.keys()):
       noParamName = True
-      response = "No name parameter in request body."
+      response = jsonify("No name parameter in request body.")
+      response.status_code = 400
     elif (type(newAlbum["name"]) != str):
       inputNotString = True
-      response = "Name parameter must be str type."
+      response = jsonify("Name parameter must be str type.")
+      response.status_code = 400
     else:
       findArtist, row = helpers.id_on_db(index,"artists")
       if (not findArtist):
-        response = "Artist not on DB."
+        response = jsonify("Artist not on DB.")
+        response.status_code = 404
       else:
         connection = connect_to_db()
         if (connection.is_connected()):
           cursor = connection.cursor()
           artistId = row[2]
           if (not artistId):
-            response = "Artist not on iTunes, no Albuns."
+            response = jsonify("Artist not on iTunes, no Albuns.")
+            response.status_code = 200
           else:
             albuns = helpers.get_type_from_id(artistId, "album")
             if (type(albuns) == str):
               response = albuns
+              response = jsonify(response)
+              response.status_code = 400
             else:
               dataToSave = []
               for album in albuns:
@@ -697,22 +707,25 @@ def add_album(index):
                   }) 
                   break
               if (not dataToSave):
-                response = "Album not on iTunes."
+                response = jsonify("Album not on iTunes.")
+                response.status_code = 200
               else:
                 findAlbum = helpers.on_db(dataToSave[0]['idAlbumItunes'],"albuns")
                 if (findAlbum):
-                  response = "Album already on DB."
+                  response = jsonify("Album already on DB.")
+                  response.status_code = 200
                 else:
                   sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                   data = (dataToSave[0]['nameAlbum'],dataToSave[0]['trackCount'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idAlbumItunes'],dataToSave[0]['nameArtistAlbum'],index)
                   cursor.execute(sql,data)
                   connection.commit()
-                  response = "Added successful."
-    response = jsonify(response)     
-    response.status_code = 200
+                  response = jsonify("Added successful.")
+                  response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (newAlbum and not noParamName and not inputNotString and findArtist and connection.is_connected()):
       cursor.close()
