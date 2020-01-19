@@ -121,4 +121,4 @@ def is_on_itunes(artist):
       onItunes = True
     return (onItunes,result[0],result[1])
   except Exception as e:
-    print("Error:", e)
+    return "Error: " + str(e)

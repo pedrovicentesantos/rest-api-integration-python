@@ -1,6 +1,8 @@
 import unittest
+# from unittest.mock import MagicMock
+from unittest import mock
 
-from helpers import get_artist_id, get_type_from_id
+from helpers import get_artist_id, get_type_from_id, is_on_itunes
 
 class HelpersTestCase(unittest.TestCase):
   # Testes para função: get_artist_id(id)
@@ -72,5 +74,41 @@ class HelpersTestCase(unittest.TestCase):
     result = get_type_from_id({("teste",1)}, "song")
     self.assertIsInstance(result,str)
 
+  #Testes para função: is_on_itunes(artist) -> type(artist) == str
+  @mock.patch('helpers.get_artist_id')
+  def test_is_on_itunes(self,mock):
+    # Testa se o mock foi chamado dentro da função que quero testar
+    result = is_on_itunes(mock())
+    self.assertTrue(mock.called)
+
+    # Testa se o resultado é uma tupla
+    # Testa se retorna True pois esse artista existe
+    mock.return_value = (1031397873,"Dua Lipa")
+    result = is_on_itunes(mock())
+    self.assertIsInstance(result,tuple)
+    self.assertTrue(result[0])
+    
+    # Testa se o resultado é uma tupla
+    # Testa se retorna False pois nesse caso não tem ID de artista
+    mock.return_value = ("","Teste")
+    result = is_on_itunes(mock())
+    self.assertIsInstance(result,tuple)
+    self.assertFalse(result[0])
+
+    # Testa se retorna uma string quando recebe um erro
+    mock.return_value = "Error"
+    result = is_on_itunes(mock())
+    self.assertIsInstance(result,str)
+    self.assertNotIsInstance(result,tuple)
+
+    # Testa se cai na exceção quando não recebe uma string
+    # mock.return_value = 2
+    result = is_on_itunes(2)
+    self.assertRaises(Exception)
+    result = is_on_itunes([2])
+    self.assertRaises(Exception)
+    result = is_on_itunes({2})
+    self.assertRaises(Exception)
+    
 if __name__ == '__main__':
     unittest.main()
