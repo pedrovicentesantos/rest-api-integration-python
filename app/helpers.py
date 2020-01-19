@@ -144,5 +144,24 @@ def add_all_items_to_db(idItunes,idDb,table,cursor):
           sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
           data = (dataToAdd['nameAlbum'],dataToAdd['trackCount'],dataToAdd['explicit'],dataToAdd['genre'],dataToAdd['idAlbumItunes'],dataToAdd['nameArtistAlbum'],idDb)
           cursor.execute(sql,data)
+    elif (table == "song"):
+      songs = get_type_from_id(idItunes,"song")
+      if (type(songs) != str):
+        dataToSave = []
+        for song in songs:
+          dataToSave.append({
+                'nameSong' : song['trackName'],
+                'explicit' : song['trackExplicitness'],
+                'genre' : song['primaryGenreName'],
+                'idSongItunes' : song['trackId'],
+                'nameArtistSong' : song['artistName'],
+                'nameAlbumSong' : song['collectionName'],
+                'artistIdItunes' : song['artistId']
+            }) 
+        for dataToAdd in dataToSave:
+          sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+          data = (dataToAdd['nameSong'],dataToAdd['genre'],dataToAdd['explicit'],dataToAdd['idSongItunes'],dataToAdd['nameArtistSong'],dataToAdd['nameAlbumSong'],idDb)
+          cursor.execute(sql,data)
+      # return songs
   except Exception as e:
     return "Error: " + str(e)

@@ -176,8 +176,18 @@ def add_artist():
               row = cursor.fetchone()
               # Colocar albuns no BD
               helpers.add_all_items_to_db(id,row[0],"album",cursor)
+              
+              # Pegar IDs albuns do artista
+              sql = "SELECT idAlbum,idAlbumItunes FROM albuns WHERE idArtistAlbum=%s"
+              data = (row[0],)
+              cursor.execute(sql,data)
+              rows = cursor.fetchall()
+              # app.logger(rows)
               # Colocar musicas nos albuns
-
+              for row in rows:
+                helpers.add_all_items_to_db(row[1],row[0],"song",cursor)
+                # app.logger.info(aux)
+              
             
             # Commit só depois que adicionar artista, checar e adicionar albuns e checar e adicionar musicas
             connection.commit()
