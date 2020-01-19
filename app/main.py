@@ -164,22 +164,27 @@ def add_artist():
     notStr = False
     if (not artist):
       response = jsonify("No Body in request.")
+      response.status_code = 400
     elif ("name" not in artist.keys()):
       noParamName = True
       response = jsonify("No name parameter in request body.")
+      response.status_code = 400
     elif (type(artist['name']) != str):
       notStr = True
       response = jsonify("Name parameter must be str type.")
+      response.status_code = 400
     else:
       connection = connect_to_db()
       cursor = connection.cursor()
       find = helpers.on_db(artist,"artists")
       if (find):
         response = jsonify("Artist already on DB.")
+        response.status_code = 200
       else:
         result = helpers.is_on_itunes(artist['name'])
         if (type(result) == str):
           response = jsonify(result)
+          response.status_code = 400
         else:
           if (not result[0]):
             id = None
@@ -191,9 +196,6 @@ def add_artist():
             sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
             data = (name,id)
             cursor.execute(sql,data)
-            # connection.commit()
-            response = jsonify("Added successful.")
-
             if (id):
               # Pegar ID do artista
               sql = "SELECT idArtist FROM artists WHERE nameArtist=%s"
@@ -209,20 +211,21 @@ def add_artist():
               data = (row[0],)
               cursor.execute(sql,data)
               rows = cursor.fetchall()
-              # app.logger(rows)
               # Colocar musicas nos albuns
               for row in rows:
                 helpers.add_all_items_to_db(row[1],row[0],"song",cursor)
                 # app.logger.info(aux)
               
-            
+            response = jsonify("Added successful.")
+            response.status_code = 200
             # Commit só depois que adicionar artista, checar e adicionar albuns e checar e adicionar musicas
             connection.commit()
-
-    response.status_code = 200
+    # response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (artist and not notStr and not noParamName and connection.is_connected()):
       cursor.close()
