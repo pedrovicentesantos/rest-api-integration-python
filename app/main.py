@@ -81,13 +81,28 @@ def update_artist(index):
         else:
           connection = connect_to_db()
           if (connection.is_connected()):
+            # Deletar todos os albuns e musicas do artista antes
             cursor = connection.cursor()
+            sql = "DELETE FROM albuns WHERE idArtistAlbum=%s"
+            cursor.execute(sql,(index,))
             if (not result[0]):
+              # Sem ID iTunes
               id = None
               name = artist['name']
             else:
+              # Com ID iTunes
               id = result[1]
               name = result[2]
+              # Colocar albuns no BD
+              helpers.add_all_items_to_db(id,index,"album",cursor)
+              # Pegar IDs albuns do artista
+              sql = "SELECT idAlbum,idAlbumItunes FROM albuns WHERE idArtistAlbum=%s"
+              cursor.execute(sql,(index,))
+              rows = cursor.fetchall()
+              # app.logger(rows)
+              # Colocar musicas nos albuns
+              for row in rows:
+                helpers.add_all_items_to_db(row[1],row[0],"song",cursor)
             findNameArtist = helpers.on_db(artist,"artists")
             if (not findNameArtist):
               sql = "UPDATE artists SET nameArtist = %s, idArtistItunes=%s WHERE idArtist= %s"
