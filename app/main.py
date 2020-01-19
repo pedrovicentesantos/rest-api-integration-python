@@ -738,28 +738,34 @@ def add_song(index):
     noParamName = False
     inputNotString = False
     if (not newSong):
-      response = "No Body in request."
+      response = jsonify("No Body in request.")
+      response.status_code = 400
     elif ("name" not in newSong.keys()):
       noParamName = True
-      response = "No name parameter in request body."
+      response = jsonify("No name parameter in request body.")
+      response.status_code = 400
     elif (type(newSong["name"]) != str):
       inputNotString = True
-      response = "Name parameter must be str type."
+      response = jsonify("Name parameter must be str type.")
+      response.status_code = 400
     else:
       findAlbum, row = helpers.id_on_db(index,"albuns")
       if (not findAlbum):
-        response = "Album not on DB."
+        response = jsonify("Album not on DB.")
+        response.status_code = 404
       else:
         connection = connect_to_db()
         if (connection.is_connected()):
           cursor = connection.cursor()
           albumId = row[5]
           if (not albumId):
-            response = "Album not on iTunes, no Songs."
+            response = jsonify("Album not on iTunes, no Songs.")
+            response.status_code = 200
           else:
             songs = helpers.get_type_from_id(albumId,"song")
             if (type(songs) == str):
-              response = songs
+              response = jsonify(songs)
+              response.status_code = 400
             else:
               dataToSave = []
               for song in songs:
@@ -775,22 +781,25 @@ def add_song(index):
                   }) 
                   break
               if (not dataToSave):
-                response = "Song not on iTunes."
+                response = jsonify("Song not on iTunes.")
+                response.status_code = 200
               else:
                 findSong = helpers.on_db(dataToSave[0]['idSongItunes'],"songs")
                 if (findSong):
-                  response = "Song already on DB."
+                  response = jsonify("Song already on DB.")
+                  response.status_code = 200
                 else:
                   sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
                   data = (dataToSave[0]['nameSong'],dataToSave[0]['genre'],dataToSave[0]['explicit'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
                   cursor.execute(sql,data)
                   connection.commit()
-                  response = "Added successful."
-    response = jsonify(response)     
-    response.status_code = 200
+                  response = jsonify("Added successful.")
+                  response.status_code = 200              
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
   finally:
     if (newSong and not noParamName and not inputNotString and findAlbum and connection.is_connected()):
       cursor.close()
