@@ -220,7 +220,6 @@ def add_artist():
             response.status_code = 200
             # Commit só depois que adicionar artista, checar e adicionar albuns e checar e adicionar musicas
             connection.commit()
-    # response.status_code = 200
     return response
   except Exception as e:
     response = jsonify("Error: " + str(e))
@@ -237,6 +236,8 @@ def get_all_albuns_artist(index):
     find, _ = helpers.id_on_db(index,"artists")
     if (not find):
       response = "Artist not on DB."
+      response = jsonify(response)
+      response.status_code = 404
     else:
       connection = connect_to_db()
       sql = "SELECT * FROM albuns WHERE idArtistAlbum=%s"
@@ -248,11 +249,13 @@ def get_all_albuns_artist(index):
         response = []
         for row in rows:
           response.append(dict(zip(row_headers,row)))
-    response = jsonify(response)
-    response.status_code = 200
+      response = jsonify(response)
+      response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: "+str(e))
+    response.status_code = 400
+    return response
   finally:
     if (find and connection.is_connected()):
       cursor.close()
