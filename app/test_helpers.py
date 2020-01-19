@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from helpers import get_artist_id, get_type_from_id, is_on_itunes
+from helpers import get_artist_id, get_type_from_id, is_on_itunes, on_db
 from db_connect import connect_to_db
 import mysql.connector
 
@@ -115,21 +115,22 @@ class HelpersTestCase(unittest.TestCase):
   @mock.patch('mysql.connector.connect')
   def test_connect_to_db(self,mock):
 
-    # Quando chamo e consigo me conectar
+    # Quando conecta
+    mock.return_value.is_connected.return_value = True
     result = connect_to_db()
     self.assertIsNotNone(result)
-    self.assertNotIsInstance(result,str)
+    self.assertIsInstance(result,unittest.mock.MagicMock)
 
-    # Quando não consigo me conectar
-    mock.return_value = None
+    # Quando não conecta
+    mock.return_value.is_connected.return_value = False
     result = connect_to_db()
-    self.assertRaises(Exception)
-    self.assertIsInstance(result,str)
-    self.assertRegex(result,"Error:*")
+    self.assertIsNone(result)
+    self.assertNotIsInstance(result,unittest.mock.MagicMock)
 
-    # Quando ocorre uma exceção
+    # # Quando ocorre uma exceção
     mock.side_effect = Exception()
     result = connect_to_db()
+    self.assertIsNotNone(result)
     self.assertRaises(Exception)
     self.assertIsInstance(result,str)
     self.assertRegex(result,"Error:*")

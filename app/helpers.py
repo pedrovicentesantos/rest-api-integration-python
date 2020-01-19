@@ -49,7 +49,7 @@ def on_db(item,table):
     connection = connect_to_db()
     if(table=="artists"):
       sql = "SELECT * FROM artists"
-      if connection.is_connected():
+      if (connection.is_connected()):
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql)
         rows = cursor.fetchall()
@@ -79,7 +79,8 @@ def on_db(item,table):
             break
     return find
   except Exception as e:
-    print("Error: ", e)
+    # print("Error: ", e)
+    return "Error: " + str(e)
   finally:
     if(connection.is_connected()):
       cursor.close()
@@ -122,3 +123,7 @@ def is_on_itunes(artist):
     return (onItunes,result[0],result[1])
   except Exception as e:
     return "Error: " + str(e)
+
+if __name__ == "__main__":
+  # print(on_db(2,"table"))
+  print(on_db(2,"albuns"))
