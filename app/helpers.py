@@ -124,6 +124,25 @@ def is_on_itunes(artist):
   except Exception as e:
     return "Error: " + str(e)
 
-if __name__ == "__main__":
-  # print(on_db(2,"table"))
-  print(on_db(2,"albuns"))
+def add_all_items_to_db(idItunes,idDb,table,cursor):
+  try:
+    if (table == "album"):
+      albuns = get_type_from_id(idItunes, "album")
+      if (type(albuns) != str):
+        dataToSave = []
+        for album in albuns:
+          dataToSave.append({
+                'nameAlbum' : album['collectionName'],
+                'trackCount' : album['trackCount'],
+                'explicit' : album['collectionExplicitness'],
+                'genre' : album['primaryGenreName'],
+                'idAlbumItunes' : album['collectionId'],
+                'nameArtistAlbum' : album['artistName'],
+                'artistIdItunes' : album['artistId']
+            }) 
+        for dataToAdd in dataToSave:
+          sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+          data = (dataToAdd['nameAlbum'],dataToAdd['trackCount'],dataToAdd['explicit'],dataToAdd['genre'],dataToAdd['idAlbumItunes'],dataToAdd['nameArtistAlbum'],idDb)
+          cursor.execute(sql,data)
+  except Exception as e:
+    return "Error: " + str(e)

@@ -134,11 +134,15 @@ def add_artist():
   try:
     artist = request.get_json()
     noParamName = False
+    notStr = False
     if (not artist):
       response = jsonify("No Body in request.")
     elif ("name" not in artist.keys()):
       noParamName = True
       response = jsonify("No name parameter in request body.")
+    elif (type(artist['name']) != str):
+      notStr = True
+      response = jsonify("Name parameter must be str type.")
     else:
       connection = connect_to_db()
       cursor = connection.cursor()
@@ -160,14 +164,30 @@ def add_artist():
             sql = "INSERT INTO artists (nameArtist,idArtistItunes) VALUES (%s,%s)"
             data = (name,id)
             cursor.execute(sql,data)
-            connection.commit()
+            # connection.commit()
             response = jsonify("Added successful.")
+
+            if (id):
+              # Pegar ID do artista
+              sql = "SELECT idArtist FROM artists WHERE nameArtist=%s"
+              data = (name,)
+              cursor = connection.cursor(pymysql.cursors.DictCursor)
+              cursor.execute(sql,data)
+              row = cursor.fetchone()
+              # Colocar albuns no BD
+              helpers.add_all_items_to_db(id,row[0],"album",cursor)
+              # Colocar musicas nos albuns
+
+            
+            # Commit só depois que adicionar artista, checar e adicionar albuns e checar e adicionar musicas
+            connection.commit()
+
     response.status_code = 200
     return response
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (artist and not noParamName and connection.is_connected()):
+    if (artist and not notStr and not noParamName and connection.is_connected()):
       cursor.close()
       connection.close()
 
