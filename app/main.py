@@ -133,8 +133,12 @@ def delete_artist(index):
 def add_artist():
   try:
     artist = request.get_json()
+    noParamName = False
     if (not artist):
       response = jsonify("No Body in request.")
+    elif ("name" not in artist.keys()):
+      noParamName = True
+      response = jsonify("No name parameter in request body.")
     else:
       connection = connect_to_db()
       cursor = connection.cursor()
@@ -163,7 +167,7 @@ def add_artist():
   except Exception as e:
     print("Error: ", e)
   finally:
-    if (artist and connection.is_connected()):
+    if (artist and not noParamName and connection.is_connected()):
       cursor.close()
       connection.close()
 
