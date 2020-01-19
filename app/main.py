@@ -266,7 +266,8 @@ def get_all_songs_artist(index):
   try:
     find, _ = helpers.id_on_db(index,"artists")
     if (not find):
-      response = "Artist not on DB."
+      response = jsonify("Artist not on DB.")
+      response.status_code = 404
     else:  
       connection = connect_to_db()
       sql = "SELECT songs.* FROM songs INNER JOIN albuns ON albuns.idArtistAlbum=%s"
@@ -278,11 +279,13 @@ def get_all_songs_artist(index):
         response = []
         for row in rows:
           response.append(dict(zip(row_headers,row)))  
-    response = jsonify(response)
-    response.status_code = 200
+      response = jsonify(response)
+      response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    reponse = jsonify("Error: "+str(e))
+    response.status_code = 400
+    return response
   finally:
     if (find and connection.is_connected()):
       cursor.close()
@@ -293,7 +296,8 @@ def get_album_artist(index_artista,index_album):
   try:
     find, _ = helpers.id_on_db(index_artista,"artists")
     if (not find):
-      response = "Artist not on DB."
+      response = jsonify("Artist not on DB.")
+      response.status_code = 404
     else:
       find, row = helpers.id_on_db(index_album,"albuns")
       if (find):
@@ -311,13 +315,16 @@ def get_album_artist(index_artista,index_album):
           }
         else:
           response = []
+        response = jsonify(response)
+        response.status_code = 200
       else:
-        response = "Album not on DB."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify("Album not on DB.")
+        response.status_code = 404
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
 
 @app.route('/artistas/<int:index_artista>/musicas/<int:index_musica>',methods=['GET'])
 def get_song_artist(index_artista,index_musica):
