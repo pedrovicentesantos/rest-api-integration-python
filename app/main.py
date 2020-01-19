@@ -805,6 +805,69 @@ def add_song(index):
       cursor.close()
       connection.close()
 
+@app.route('/artistas', methods=['DELETE'])
+def delete_all_artists():
+  try:
+    sql = "DELETE FROM artists"
+    connection = connect_to_db()
+    if (connection.is_connected()):
+      cursor = connection.cursor()
+      cursor.execute(sql)
+      connection.commit()
+      response = jsonify("Deletion successful")
+      response.status_code = 200
+      return response
+  except Exception as e:
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
+  finally:
+    if (connection.is_connected()):
+      cursor.close()
+      connection.close()
+
+@app.route('/albuns', methods=['DELETE'])
+def delete_all_albuns():
+  try:
+    sql = "DELETE FROM albuns"
+    connection = connect_to_db()
+    if (connection.is_connected()):
+      cursor = connection.cursor()
+      cursor.execute(sql)
+      connection.commit()
+      response = jsonify("Deletion successful")
+      response.status_code = 200
+      return response
+  except Exception as e:
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
+  finally:
+    if (connection.is_connected()):
+      cursor.close()
+      connection.close()
+
+@app.route('/musicas', methods=['DELETE'])
+def delete_all_songs():
+  try:
+    sql = "DELETE FROM songs"
+    connection = connect_to_db()
+    if (connection.is_connected()):
+      cursor = connection.cursor()
+      cursor.execute(sql)
+      connection.commit()
+      response = jsonify("Deletion successful")
+      response.status_code = 200
+      return response
+  except Exception as e:
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
+  finally:
+    if (connection.is_connected()):
+      cursor.close()
+      connection.close()
+
 # Rotas iTunes
 @app.route('/artistas/<int:index>/albuns/itunes',methods=['GET'])
 def get_all_albuns_artist_itunes(index):
@@ -905,62 +968,7 @@ def get_all_songs_album_itunes(index):
   except Exception as e:
     print("Error: ", e)
 
-@app.route('/artistas', methods=['DELETE'])
-def delete_all_artists():
-  try:
-    sql = "DELETE FROM artists"
-    connection = connect_to_db()
-    if (connection.is_connected()):
-      cursor = connection.cursor()
-      cursor.execute(sql)
-      connection.commit()
-      response = jsonify("Deletion successful")
-      response.status_code = 204
-      return response
-  except Exception as e:
-    return "Error: " + str(e)
-  finally:
-    if (connection.is_connected()):
-      cursor.close()
-      connection.close()
 
-@app.route('/albuns', methods=['DELETE'])
-def delete_all_albuns():
-  try:
-    sql = "DELETE FROM albuns"
-    connection = connect_to_db()
-    if (connection.is_connected()):
-      cursor = connection.cursor()
-      cursor.execute(sql)
-      connection.commit()
-      response = jsonify("Deletion successful")
-      response.status_code = 204
-      return response
-  except Exception as e:
-    return "Error: " + str(e)
-  finally:
-    if (connection.is_connected()):
-      cursor.close()
-      connection.close()
-
-@app.route('/musicas', methods=['DELETE'])
-def delete_all_songs():
-  try:
-    sql = "DELETE FROM songs"
-    connection = connect_to_db()
-    if (connection.is_connected()):
-      cursor = connection.cursor()
-      cursor.execute(sql)
-      connection.commit()
-      response = jsonify("Deletion successful")
-      response.status_code = 204
-      return response
-  except Exception as e:
-    return "Error: " + str(e)
-  finally:
-    if (connection.is_connected()):
-      cursor.close()
-      connection.close()
 
 if __name__ == '__main__':
   app.run(debug=True,host = '0.0.0.0')
