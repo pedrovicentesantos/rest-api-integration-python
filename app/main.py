@@ -874,17 +874,19 @@ def get_all_albuns_artist_itunes(index):
   try:    
     find, row = helpers.id_on_db(index,"artists")
     if (not find):
-      response = "Artist not on DB."
+      response = jsonify("Artist not on DB.")
+      response.status_code = 404
     else:  
       artistId = row[2]
       if (artistId):
         albuns = helpers.get_type_from_id(artistId, "album")
         if (type(albuns) == str):
-          response = albuns
+          response = jsonify(albuns)
+          response.status_code = 400
         else:
-          response = []
+          responseDict = []
           for album in albuns:
-            response.append(
+            responseDict.append(
               {
                 'nameArtistAlbum' : album['artistName'],
                 'nameAlbum' : album['collectionName'],
@@ -894,30 +896,35 @@ def get_all_albuns_artist_itunes(index):
                 'idAlbumItunes' : album['collectionId']
               }
             )
+          response = jsonify(responseDict)
+          response.status_code = 200
       else:
-        response = "Artist not on iTunes."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify("Artist not on iTunes.")
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
 
 @app.route('/artistas/<int:index>/musicas/itunes', methods=['GET'])
 def get_all_songs_artist_itunes(index):
   try:
     find, row = helpers.id_on_db(index,"artists")
     if (not find):
-      response = "Artist not on DB."
+      response = jsonify("Artist not on DB.")
+      response.status_code = 404
     else:  
       artistId = row[2]
       if (artistId):
         songs = helpers.get_type_from_id(artistId, "song")
         if (type(songs) == str):
-          response = songs
+          response = jsonify(songs)
+          response.status_code = 400
         else:
-          response = []
+          responseDict = []
           for song in songs:
-            response.append(
+            responseDict.append(
               {
                 'nameArtistSong' : song['artistName'],
                 'nameAlbumSong' : song['collectionName'],
@@ -927,30 +934,35 @@ def get_all_songs_artist_itunes(index):
                 'idSongItunes' : song['trackId']
               }
             )
+          response = jsonify(responseDict)
+          response.status_code = 200
       else:
-        response = "Artist not on iTunes."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify("Artist not on iTunes.")
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
 
 @app.route('/albuns/<int:index>/musicas/itunes', methods=['GET'])
 def get_all_songs_album_itunes(index):
   try:
     find, row = helpers.id_on_db(index,"albuns")
     if (not find):
-      response = "Album not on DB."
+      response = jsonify("Album not on DB.")
+      response.status_code = 404
     else:  
       albumId = row[5]
       if (albumId):
         songs = helpers.get_type_from_id(albumId, "song")
         if (type(songs) == str):
-          response = songs
+          response = jsonify(songs)
+          response.status_code = 400
         else:
-          response = []
+          responseDict = []
           for song in songs:
-            response.append(
+            responseDict.append(
               {
                 'nameArtistSong' : song['artistName'],
                 'nameAlbumSong' : song['collectionName'],
@@ -960,13 +972,16 @@ def get_all_songs_album_itunes(index):
                 'idSongItunes' : song['trackId']
               }
             )
+          response = jsonify(responseDict)
+          response.status_code = 200
       else:
-        response = "Album not on iTunes."
-    response = jsonify(response)
-    response.status_code = 200
+        response = jsonify("Album not on iTunes.")
+        response.status_code = 200
     return response
   except Exception as e:
-    print("Error: ", e)
+    response = jsonify("Error: " + str(e))
+    response.status_code = 400
+    return response
 
 
 
