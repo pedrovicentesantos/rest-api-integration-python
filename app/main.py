@@ -47,13 +47,15 @@ def get_artist(index):
       cursor.execute(sql,(index,))
       row = cursor.fetchone()
       if (not row):
-        response = []
+        response = "Artist not on DB."
+        response = jsonify(response)
+        response.status_code = 404
       else:
         row_headers = [column_name[0] for column_name in cursor.description]
         response = []
         response.append(dict(zip(row_headers,row)))
-      response = jsonify(response)
-      response.status_code = 200
+        response = jsonify(response)
+        response.status_code = 200
       return response
   except Exception as e:
     response = jsonify("Error: ", e)
