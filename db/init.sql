@@ -1,39 +1,3 @@
--- CREATE DATABASE IF NOT EXISTS artists_db;
--- USE artists_db;
-
--- CREATE TABLE IF NOT EXISTS artists (
---   `idArtist` INT NOT NULL AUTO_INCREMENT,
---   `nameArtist` VARCHAR(255) NOT NULL,
---   `idArtistItunes` BIGINT NULL DEFAULT NULL,
---   PRIMARY KEY (`idArtist`))
--- ENGINE = InnoDB
--- DEFAULT CHARACTER SET = utf8;
-
--- CREATE TABLE IF NOT EXISTS albuns (
---   `idAlbum` INT NOT NULL AUTO_INCREMENT,
---   `nameAlbum` VARCHAR(255) NOT NULL,
---   `numberTracks` INT NOT NULL,
---   `explicit` VARCHAR(45) NOT NULL,
---   `genre` VARCHAR(45) NOT NULL,
---   `idAlbumItunes` BIGINT NOT NULL,
---   `artist` VARCHAR(45) NOT NULL,
---   `idArtistAlbum` INT NOT NULL,
---   PRIMARY KEY (`idAlbum`))
--- ENGINE = InnoDB
--- DEFAULT CHARACTER SET = utf8;
-
--- CREATE TABLE IF NOT EXISTS songs (
---   `idSong` INT NOT NULL AUTO_INCREMENT,
---   `nameSong` VARCHAR(255) NOT NULL,
---   `explicit` VARCHAR(45) NOT NULL,
---   `genre` VARCHAR(45) NOT NULL,
---   `idSongItunes` BIGINT NOT NULL,
---   `artist` VARCHAR(45) NOT NULL,
---   `idAlbumSong` INT NOT NULL,
---   PRIMARY KEY (`idSong`))
--- ENGINE = InnoDB
--- DEFAULT CHARACTER SET = utf8;
-
 CREATE DATABASE IF NOT EXISTS artists_db;
 USE artists_db;
 
