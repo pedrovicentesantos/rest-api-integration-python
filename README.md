@@ -88,12 +88,12 @@ Com essas ferramentas é possível fazer os requests corretamente e incluir o `b
 
 Exemplos de usos podem ser vistos no link para a documentação no Postman:
 
-<!-- Link para Postman -->
+https://documenter.getpostman.com/view/10132901/SWT5j1Zc
 
 ## Endpoints
 Com o container rodando no Docker é possível fazer chamadas a API utilizando os endpoints documentados em:
 
-<!-- Link para Postman -->
+https://documenter.getpostman.com/view/10132901/SWT5j1Zc
 
 Mais informações sobre como funciona a lógica da API também se encontram no link acima.
 
