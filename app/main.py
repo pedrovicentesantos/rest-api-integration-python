@@ -345,8 +345,8 @@ def get_song_artist(index_artista,index_musica):
             response = {
               'idSong' : row[0],
               'nameSong' : row[1],
-              'genre' : row[2],
-              'explicit' : row[3],
+              'genre' : row[3],
+              'explicit' : row[2],
               'idSongItunes' : row[4],
               'nameArtistSong' : row[5],
               'nameAlbumSong' : row[6],
@@ -516,8 +516,8 @@ def get_song_album(index_album,index_musica):
         response = {
           'idSong' : row[0],
           'nameSong': row[1],
-          'genre': row[2],
-          'explicit':row[3],
+          'genre': row[3],
+          'explicit':row[2],
           'idSongItunes':row[4],
           'nameArtistSong':row[5],
           'nameAlbumSong':row[6],
@@ -792,7 +792,7 @@ def add_song(index):
                   response.status_code = 200
                 else:
                   sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                  data = (dataToSave[0]['nameSong'],dataToSave[0]['genre'],dataToSave[0]['explicit'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
+                  data = (dataToSave[0]['nameSong'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
                   cursor.execute(sql,data)
                   connection.commit()
                   response = jsonify("Added successful.")

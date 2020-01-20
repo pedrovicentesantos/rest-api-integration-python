@@ -160,7 +160,7 @@ def add_all_items_to_db(idItunes,idDb,table,cursor):
             }) 
         for dataToAdd in dataToSave:
           sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-          data = (dataToAdd['nameSong'],dataToAdd['genre'],dataToAdd['explicit'],dataToAdd['idSongItunes'],dataToAdd['nameArtistSong'],dataToAdd['nameAlbumSong'],idDb)
+          data = (dataToAdd['nameSong'],dataToAdd['explicit'],dataToAdd['genre'],dataToAdd['idSongItunes'],dataToAdd['nameArtistSong'],dataToAdd['nameAlbumSong'],idDb)
           cursor.execute(sql,data)
       # return songs
   except Exception as e:
