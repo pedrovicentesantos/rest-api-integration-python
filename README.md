@@ -82,7 +82,9 @@ docker-compose down   # Este comando deleta os containers e os dados do BD são 
 Portanto, deve-se tomar cuidado ao usar este comando, pois pode gerar perda de dados.
 
 ## Funcionamento
-Para usar a API funcionando pode-se usar comandos como `curl` ou programas específicos para este fim como `Postman` e `Insomnia`.
+Ao usar a API pela primeira vez, o Banco de Dados é inicializado com nenhum dado, apenas a base de dados e as tabelas são criadas.
+
+O primeiro passo então é adicionar algum artista ao BD. Para isso, pode-se usar comandos como `curl` ou programas específicos para este fim como `Postman` e `Insomnia`.
 
 Com essas ferramentas é possível fazer os requests corretamente e incluir o `body` do request corretamente quando necessário.
 
