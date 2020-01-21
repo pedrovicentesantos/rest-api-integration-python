@@ -1,7 +1,8 @@
 # Projeto
 
-Criação de uma REST API em Python, que organiza os artistas do usuário, persistindo os dados em um Banco de Dados e tendo como base os dados obtidos a partir de consulta a API do Itunes. (https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html)
+Criação de uma REST API em Python que organiza os artistas do usuário e faz um CRUD, persistindo os dados em um Banco de Dados MySQL, tendo como base os dados obtidos a partir de consulta a API do Itunes. (https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html)
 
+Baseado no desafio proposto em: https://github.com/Infoglobo/desafio-backend-infograficos
 ## Tecnologias
 
 - Python na versão 3.7.6
