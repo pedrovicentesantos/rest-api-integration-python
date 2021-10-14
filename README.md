@@ -109,5 +109,3 @@ Para rodar os testes basta usar o comando:
 python test_helpers.py
 ```
 
-OBS: Como ainda estou iniciando em testes unitários, consegui realizar alguns poucos testes com o conhecimento que tenho no momento.
-
