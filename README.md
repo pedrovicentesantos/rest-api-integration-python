@@ -18,13 +18,13 @@ Para utilizar o projeto é necessário ter o Docker e Docker Compose instalado. 
 Para começar a utilizar deve-se clonar o repositório:
 
 ```shell
-git clone https://github.com/pedrovicentesantos/rest-api-infoglobo.git
-cd rest-api-infoglobo
+git clone https://github.com/pedrovicentesantos/rest-api-integration-python.git
+cd rest-api-integration-python
 ```
 
 É importante manter a seguinte estrutura dos arquivos. Caso contrário, o `docker-compose` não irá encontrar os arquivos e não vai funcionar.
   
-    rest-api-infoglobo  
+    rest-api-integration-python  
     └── app
     │    ├── app.py
     │    ├── db_connect.py
