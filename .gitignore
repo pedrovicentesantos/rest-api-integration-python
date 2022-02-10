@@ -1,4 +1,5 @@
 .vscode
-app/__pycache__
+__pycache__
 app/obterDados.py
 env
+*.db
