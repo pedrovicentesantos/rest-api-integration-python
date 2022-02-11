@@ -148,3 +148,25 @@ class SQLiteRepository:
         rows = cursor.fetchall()
         conn.close()
         return rows
+
+    def get_album_by_id(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM albums WHERE id=?', (id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
+    def update_album(self, id, name, genre):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_album_by_id(id)):
+            if (name):
+                cursor.execute('UPDATE albums SET name=? WHERE id=?', (name, id,))
+            if (genre):
+                cursor.execute('UPDATE albums SET genre=? WHERE id=?', (genre, id,))
+            conn.commit()
+            album = self.get_album_by_id(id)
+            conn.close()
+            return album
+        return False

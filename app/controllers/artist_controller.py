@@ -59,6 +59,9 @@ class ArtistController:
 
     def update_artist(self, index, request):
         try:
+            request_data = request.get_json()
+            if (not request_data):
+                return bad_request('No body provided')
             new_name = None
             new_genre = None
             if ('name' in request.get_json().keys()):

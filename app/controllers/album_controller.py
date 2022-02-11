@@ -52,3 +52,23 @@ class AlbumController:
 
         except Exception as e:
             return internal_server_error(str(e))
+
+    def update_album(self, index, request):
+        try:
+            request_data = request.get_json()
+            if (not request_data):
+                return bad_request('No body provided')
+            new_name = None
+            new_genre = None
+            if ('name' in request.get_json().keys()):
+                new_name = request.get_json()['name'].lower()
+            if ('genre' in request.get_json().keys()):
+                new_genre = request.get_json()['genre'].lower()
+
+            updated_album = self.repository.update_album(index, new_name, new_genre)
+            if (not updated_album):
+                return not_found('Album not found')
+            return ok(format_album(updated_album))
+
+        except Exception as e:
+            return internal_server_error(str(e))

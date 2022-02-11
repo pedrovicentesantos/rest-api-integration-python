@@ -66,6 +66,12 @@ def get_albums():
   response = controller.get_albums(request)
   return response
 
+@app.route('/albums/<int:index>', methods=['PUT'])
+def update_album(index):
+  controller = AlbumController(repository)
+  response = controller.update_album(index, request)
+  return response
+
 @app.route('/artistas/<int:index>/albuns', methods=['GET'])
 def get_all_albuns_artist(index):
   try:    
