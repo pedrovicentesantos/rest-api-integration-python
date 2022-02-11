@@ -72,6 +72,12 @@ def update_album(index):
   response = controller.update_album(index, request)
   return response
 
+@app.route('/albums/<int:index>', methods=['DELETE'])
+def delete_album(index):
+  controller = AlbumController(repository)
+  response = controller.delete_album(index)
+  return response
+
 @app.route('/artistas/<int:index>/albuns', methods=['GET'])
 def get_all_albuns_artist(index):
   try:    
@@ -379,33 +385,6 @@ def get_song_album(index_album,index_musica):
     response = jsonify("Error: " + str(e))
     response.status_code = 400
     return response
-
-@app.route('/albuns/<int:index>',methods=['DELETE'])
-def delete_album(index):
-  try:
-    connection = connect_to_db()
-    find, _= helpers.id_on_db(index,"albuns")
-    if (not find):
-      response = jsonify("Album not on DB.")
-      response.status_code = 404
-    else:
-      sql = "DELETE FROM albuns WHERE idAlbum=%s"
-      if (connection.is_connected()):
-        cursor = connection.cursor()
-        cursor.execute(sql,(index,))
-        connection.commit()
-        response = "Deletion successful."
-        response = jsonify(response)
-        response.status_code = 200
-    return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (find and connection.is_connected()):
-      cursor.close()
-      connection.close()
 
 @app.route('/musicas/<int:index>',methods=['DELETE'])
 def delete_song(index):

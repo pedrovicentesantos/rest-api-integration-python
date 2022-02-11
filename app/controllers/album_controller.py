@@ -1,5 +1,5 @@
 from helpers.format_data import format_album
-from helpers.responses import bad_request, not_found, ok, internal_server_error
+from helpers.responses import bad_request, not_found, ok, internal_server_error, no_content
 from controllers.itunes_controller import ItunesController
 
 class AlbumController:
@@ -69,6 +69,16 @@ class AlbumController:
             if (not updated_album):
                 return not_found('Album not found')
             return ok(format_album(updated_album))
+
+        except Exception as e:
+            return internal_server_error(str(e))
+
+    def delete_album(self, index):
+        try:
+            deleted = self.repository.delete_album(index)
+            if (not deleted):
+                return not_found('Album not found')
+            return no_content()
 
         except Exception as e:
             return internal_server_error(str(e))

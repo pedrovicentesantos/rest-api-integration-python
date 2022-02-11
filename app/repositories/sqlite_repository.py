@@ -170,3 +170,13 @@ class SQLiteRepository:
             conn.close()
             return album
         return False
+
+    def delete_album(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_album_by_id(id)):
+            cursor.execute('DELETE FROM albums WHERE id=?', (id,))
+            conn.commit()
+            conn.close()
+            return True
+        return False
