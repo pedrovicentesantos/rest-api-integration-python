@@ -82,3 +82,13 @@ class AlbumController:
 
         except Exception as e:
             return internal_server_error(str(e))
+
+    def get_album(self, index):
+        try:
+            album = self.repository.get_album_by_id(index)
+            if (not album):
+                return not_found('Album not found')
+            return ok(format_album(album))
+
+        except Exception as e:
+            return internal_server_error(str(e))

@@ -78,6 +78,12 @@ def delete_album(index):
   response = controller.delete_album(index)
   return response
 
+@app.route('/albums/<int:index>', methods=['GET'])
+def get_album(index):
+  controller = AlbumController(repository)
+  response = controller.get_album(index)
+  return response
+
 @app.route('/artistas/<int:index>/albuns', methods=['GET'])
 def get_all_albuns_artist(index):
   try:    
@@ -258,34 +264,6 @@ def get_all_songs():
     return response
   finally:
     if connection.is_connected():
-      cursor.close()
-      connection.close()
-
-@app.route('/albuns/<int:index>', methods=['GET'])
-def get_album(index):
-  try:
-    connection = connect_to_db()
-    sql = "SELECT * FROM albuns WHERE idAlbum=%s"
-    if (connection.is_connected()):
-      cursor = connection.cursor(pymysql.cursors.DictCursor)
-      cursor.execute(sql,(index,))
-      row = cursor.fetchone()
-      if (not row):
-        response = jsonify("Album not on DB.")
-        response.status_code = 404
-      else:
-        row_headers = [column_name[0] for column_name in cursor.description]
-        response = []
-        response.append(dict(zip(row_headers,row)))
-        response = jsonify(response)
-        response.status_code = 200
-      return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (connection.is_connected()):
       cursor.close()
       connection.close()
 
