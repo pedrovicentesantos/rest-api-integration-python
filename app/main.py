@@ -6,15 +6,17 @@ from flask import flash, request, jsonify
 import json
 from helpers.responses import not_found
 from controllers.artist_controller import ArtistController
+from controllers.album_controller import AlbumController
 from repositories.sqlite_repository import SQLiteRepository
 
 repository = SQLiteRepository()
 
 @app.errorhandler(404)
-def page_not_found(e):
+def route_not_found():
     response = not_found('Route not found')
     return response
 
+# Artist routes
 @app.route('/artists', methods=['GET'])
 def get_artists():
   controller = ArtistController(repository)
@@ -43,6 +45,19 @@ def delete_artist(index):
 def add_artist():
   controller = ArtistController(repository)
   response = controller.add_artist(request)
+  return response
+
+# Album routes
+@app.route('/albums', methods=['POST'])
+def add_album():
+  controller = AlbumController(repository)
+  response = controller.add_album(request)
+  return response
+
+@app.route('/albums', methods=['GET'])
+def get_albums():
+  controller = AlbumController(repository)
+  response = controller.get_albums(request)
   return response
 
 @app.route('/artistas/<int:index>/albuns', methods=['GET'])
@@ -468,81 +483,6 @@ def delete_songs_album(index):
     return response
   finally:
     if (find and connection.is_connected()):
-      cursor.close()
-      connection.close()
-
-@app.route('/artistas/<int:index>/albuns',methods=['POST'])
-def add_album(index):
-  try:
-    newAlbum = request.get_json()
-    noParamName = False
-    inputNotString = False
-    if (not newAlbum):
-      response = jsonify("No Body in request.")
-      response.status_code = 400
-    elif ("name" not in newAlbum.keys()):
-      noParamName = True
-      response = jsonify("No name parameter in request body.")
-      response.status_code = 400
-    elif (type(newAlbum["name"]) != str):
-      inputNotString = True
-      response = jsonify("Name parameter must be str type.")
-      response.status_code = 400
-    else:
-      findArtist, row = helpers.id_on_db(index,"artists")
-      if (not findArtist):
-        response = jsonify("Artist not on DB.")
-        response.status_code = 404
-      else:
-        connection = connect_to_db()
-        if (connection.is_connected()):
-          cursor = connection.cursor()
-          artistId = row[2]
-          if (not artistId):
-            response = jsonify("Artist not on iTunes, no Albuns.")
-            response.status_code = 200
-          else:
-            albuns = helpers.get_type_from_id(artistId, "album")
-            if (type(albuns) == str):
-              response = albuns
-              response = jsonify(response)
-              response.status_code = 400
-            else:
-              dataToSave = []
-              for album in albuns:
-                if (album['collectionName'].lower() == newAlbum['name'].lower()):
-                  dataToSave.append({
-                      'nameAlbum' : album['collectionName'],
-                      'trackCount' : album['trackCount'],
-                      'explicit' : album['collectionExplicitness'],
-                      'genre' : album['primaryGenreName'],
-                      'idAlbumItunes' : album['collectionId'],
-                      'nameArtistAlbum' : album['artistName'],
-                      'artistIdItunes' : album['artistId']
-                  }) 
-                  break
-              if (not dataToSave):
-                response = jsonify("Album not on iTunes.")
-                response.status_code = 200
-              else:
-                findAlbum = helpers.on_db(dataToSave[0]['idAlbumItunes'],"albuns")
-                if (findAlbum):
-                  response = jsonify("Album already on DB.")
-                  response.status_code = 200
-                else:
-                  sql = "INSERT INTO albuns (nameAlbum, trackCount,explicit,genre,idAlbumItunes, nameArtistAlbum, idArtistAlbum) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                  data = (dataToSave[0]['nameAlbum'],dataToSave[0]['trackCount'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idAlbumItunes'],dataToSave[0]['nameArtistAlbum'],index)
-                  cursor.execute(sql,data)
-                  connection.commit()
-                  response = jsonify("Added successful.")
-                  response.status_code = 200
-    return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (newAlbum and not noParamName and not inputNotString and findArtist and connection.is_connected()):
       cursor.close()
       connection.close()
 
