@@ -1,4 +1,4 @@
-from helpers.format_data import format_artist
+from helpers.format_data import format_artist, format_album
 from helpers.responses import bad_request, not_found, ok, internal_server_error, no_content
 from controllers.itunes_controller import ItunesController
 
@@ -80,6 +80,22 @@ class ArtistController:
             if (not artist):
                 return not_found('Artist not found')
             return ok(format_artist(artist))
+
+        except Exception as e:
+            return internal_server_error(str(e))
+
+    def get_albums(self, index, request):
+        try:
+            request_data = request.args
+            query_name = None
+            if ('name' in request_data.keys()):
+                query_name = request_data['name'].lower()
+
+            albums = self.repository.get_artist_albums(index, query_name)
+            if (albums == False):
+                return not_found('Artist not found')
+            formatted_albums = [format_album(album) for album in albums]
+            return ok(formatted_albums)
 
         except Exception as e:
             return internal_server_error(str(e))

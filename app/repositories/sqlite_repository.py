@@ -83,6 +83,19 @@ class SQLiteRepository:
             return artist
         return False
 
+    def get_artist_albums(self, id, name):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_artist_by_id(id)):
+            if (name):
+                cursor.execute('SELECT * FROM albums WHERE artistId=? AND name LIKE ?', (id, '%{}%'.format(name),))
+            else:
+                cursor.execute('SELECT * FROM albums WHERE artistId=?', (id,))
+            rows = cursor.fetchall()
+            conn.close()
+            return rows
+        return False
+
     # Album functionalities
     def get_album_by_artist_by_name(self, name, artist):
         conn = self.connect()

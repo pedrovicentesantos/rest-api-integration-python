@@ -23,19 +23,19 @@ def get_artists():
   response = controller.get_artists(request)
   return response
 
-@app.route('/artistas/<int:index>', methods=['GET'])
+@app.route('/artists/<int:index>', methods=['GET'])
 def get_artist(index):
   controller = ArtistController(repository)
   response = controller.get_artist(index)
   return response
 
-@app.route('/artistas/<int:index>', methods=['PUT'])
+@app.route('/artists/<int:index>', methods=['PUT'])
 def update_artist(index):
   controller = ArtistController(repository)
   response = controller.update_artist(index, request)
   return response
   
-@app.route('/artistas/<int:index>', methods=['DELETE'])
+@app.route('/artists/<int:index>', methods=['DELETE'])
 def delete_artist(index):
   controller = ArtistController(repository)
   response = controller.delete_artist(index)
@@ -45,6 +45,12 @@ def delete_artist(index):
 def add_artist():
   controller = ArtistController(repository)
   response = controller.add_artist(request)
+  return response
+
+@app.route('/artists/<int:index>/albums', methods=['GET'])
+def get_artist_albums(index):
+  controller = ArtistController(repository)
+  response = controller.get_albums(index, request)
   return response
 
 # Album routes
