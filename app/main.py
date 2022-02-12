@@ -56,6 +56,12 @@ def get_artist_songs(index):
   response = controller.get_songs(index, request)
   return response
 
+@app.route('/artists/<int:index>/albums', methods=['POST'])
+def add_album_to_artist(index):
+  controller = ArtistController(repository)
+  response = controller.add_album_to_artist(index, request)
+  return response
+
 # Album routes
 @app.route('/albums', methods=['POST'])
 def add_album():

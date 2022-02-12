@@ -126,6 +126,14 @@ class SQLiteRepository:
         conn.close()
         return row
 
+    def get_album_by_artist_id(self, name, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM albums WHERE name=? AND artistId=?', (name, id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
     def add_album(self, data):
         conn = self.connect()
         cursor = conn.cursor()
