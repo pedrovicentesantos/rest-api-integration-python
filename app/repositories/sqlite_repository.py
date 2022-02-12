@@ -17,6 +17,22 @@ class SQLiteRepository:
         return conn
     
     # Artist functionalities
+    def get_artist_by_id(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM artists WHERE id=?', (id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
+    def get_artist_by_name(self, name):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT name FROM artists WHERE name=?', (name,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+  
     def add_artist(self, data):
         conn = self.connect()
         cursor = conn.cursor()
@@ -26,22 +42,6 @@ class SQLiteRepository:
         )
         conn.commit()
         conn.close()
-    
-    def get_artist_by_name(self, name):
-        conn = self.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT name FROM artists WHERE name=?', (name,))
-        row = cursor.fetchone()
-        conn.close()
-        return row
-
-    def get_artist_by_id(self, id):
-        conn = self.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM artists WHERE id=?', (id,))
-        row = cursor.fetchone()
-        conn.close()
-        return row
 
     def get_artists(self, name, genre):
         conn = self.connect()
@@ -59,16 +59,6 @@ class SQLiteRepository:
         conn.close()
         return rows
 
-    def delete_artist(self, id):
-        conn = self.connect()
-        cursor = conn.cursor()
-        if (self.get_artist_by_id(id)):
-            cursor.execute('DELETE FROM artists WHERE id=?', (id,))
-            conn.commit()
-            conn.close()
-            return True
-        return False
-
     def update_artist(self, id, name, genre):
         conn = self.connect()
         cursor = conn.cursor()
@@ -81,6 +71,16 @@ class SQLiteRepository:
             artist = self.get_artist_by_id(id)
             conn.close()
             return artist
+        return False
+
+    def delete_artist(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_artist_by_id(id)):
+            cursor.execute('DELETE FROM artists WHERE id=?', (id,))
+            conn.commit()
+            conn.close()
+            return True
         return False
 
     def get_artist_albums(self, id, name):
@@ -110,6 +110,14 @@ class SQLiteRepository:
         return False
 
     # Album functionalities
+    def get_album_by_id(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM albums WHERE id=?', (id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
     def get_album_by_artist_by_name(self, name, artist):
         conn = self.connect()
         cursor = conn.cursor()
@@ -162,14 +170,6 @@ class SQLiteRepository:
         conn.close()
         return rows
 
-    def get_album_by_id(self, id):
-        conn = self.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM albums WHERE id=?', (id,))
-        row = cursor.fetchone()
-        conn.close()
-        return row
-
     def update_album(self, id, name, genre):
         conn = self.connect()
         cursor = conn.cursor()
@@ -208,6 +208,44 @@ class SQLiteRepository:
         return False
 
     # Song functionalities
+    def get_song_by_id(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM songs WHERE id=?', (id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
+    def get_song_by_artist_and_album_by_name(self, name, artist, album):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM songs WHERE name=? AND artistName=? AND albumName=?', (name, artist, album,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
+    def add_song(self, data):
+        conn = self.connect()
+        cursor = conn.cursor()
+        duration_in_minutes = data['trackTimeMillis'] / 1000 / 60
+        cursor.execute(
+            'INSERT INTO songs (id,name,explicit,genre,artistName,artistId,albumName,albumId,url,durationMinutes) VALUES (?,?,?,?,?,?,?,?,?,?)',
+            (
+                data['trackId'],
+                data['trackName'].lower(),
+                data['trackExplicitness'],
+                data['primaryGenreName'].lower(),
+                data['artistName'].lower(),
+                data['artistId'],
+                data['collectionName'].lower(),
+                data['collectionId'],
+                data['trackViewUrl'],
+                duration_in_minutes,
+            )
+        )
+        conn.commit()
+        conn.close()
+
     def get_songs(self, name, artist, album, genre):
         conn = self.connect()
         cursor = conn.cursor()
@@ -241,44 +279,6 @@ class SQLiteRepository:
         rows = cursor.fetchall()
         conn.close()
         return rows
-
-    def get_song_by_artist_and_album_by_name(self, name, artist, album):
-        conn = self.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM songs WHERE name=? AND artistName=? AND albumName=?', (name, artist, album,))
-        row = cursor.fetchone()
-        conn.close()
-        return row
-
-    def add_song(self, data):
-        conn = self.connect()
-        cursor = conn.cursor()
-        duration_in_minutes = data['trackTimeMillis'] / 1000 / 60
-        cursor.execute(
-            'INSERT INTO songs (id,name,explicit,genre,artistName,artistId,albumName,albumId,url,durationMinutes) VALUES (?,?,?,?,?,?,?,?,?,?)',
-            (
-                data['trackId'],
-                data['trackName'].lower(),
-                data['trackExplicitness'],
-                data['primaryGenreName'].lower(),
-                data['artistName'].lower(),
-                data['artistId'],
-                data['collectionName'].lower(),
-                data['collectionId'],
-                data['trackViewUrl'],
-                duration_in_minutes,
-            )
-        )
-        conn.commit()
-        conn.close()
-
-    def get_song_by_id(self, id):
-        conn = self.connect()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM songs WHERE id=?', (id,))
-        row = cursor.fetchone()
-        conn.close()
-        return row
 
     def update_song(self, id, name, genre):
         conn = self.connect()
