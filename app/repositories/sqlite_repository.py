@@ -231,6 +231,14 @@ class SQLiteRepository:
         row = cursor.fetchone()
         conn.close()
         return row
+    
+    def get_song_by_artist_id(self, name, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM songs WHERE name=? AND artistId=?', (name, id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
 
     def add_song(self, data):
         conn = self.connect()

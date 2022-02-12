@@ -30,6 +30,18 @@ class ItunesController:
         except Exception as e:
             print(e)
 
+    def get_song_by_artist_id(self, index, name):
+        try:
+            url = '{}=song&id={}'.format(self.base_lookup_url, index)
+            response = requests.get(url)
+            if (response.status_code == 200):
+                data = response.json()
+                for song in data['results']:
+                    if (song['wrapperType'] == 'track' and  song['trackName'].lower() == name):
+                        return song
+        except Exception as e:
+            print(e)
+
     def get_album_by_artist_by_name(self, name, artist):
         try:
             url = '{}=album&term={}'.format(self.base_search_url, artist)
