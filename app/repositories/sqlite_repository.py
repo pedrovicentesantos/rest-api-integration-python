@@ -180,3 +180,100 @@ class SQLiteRepository:
             conn.close()
             return True
         return False
+
+    # Song functionalities
+    def get_songs(self, name, artist, album, genre):
+        conn = self.connect()
+        cursor = conn.cursor()
+        query = 'SELECT * FROM songs'
+        query_object = []
+
+        if (name):
+            query += ' WHERE name LIKE ?'
+            query_object.append('%{}%'.format(name))
+        if (artist):
+            if (len(query_object) > 0):
+                query += ' AND artistName LIKE ?'
+            else:
+                query += ' WHERE artistName LIKE ?'
+            query_object.append('%{}%'.format(artist))
+        if (album):
+            if (len(query_object) > 0):
+                query += ' AND albumName LIKE ?'
+            else:
+                query += ' WHERE albumName LIKE ?'
+            query_object.append('%{}%'.format(album))
+        if (genre):
+            if (len(query_object) > 0):
+                query += ' AND genre=?'
+            else:
+                query += ' WHERE genre=?'
+            query_object.append(genre)
+        
+        cursor.execute(query, tuple(query_object,))
+
+        rows = cursor.fetchall()
+        conn.close()
+        return rows
+
+    def get_song_by_artist_and_album_by_name(self, name, artist, album):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM songs WHERE name=? AND artistName=? AND albumName=?', (name, artist, album,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
+    def add_song(self, data):
+        conn = self.connect()
+        cursor = conn.cursor()
+        duration_in_minutes = data['trackTimeMillis'] / 1000 / 60
+        cursor.execute(
+            'INSERT INTO songs (id,name,explicit,genre,artistName,artistId,albumName,albumId,url,durationMinutes) VALUES (?,?,?,?,?,?,?,?,?,?)',
+            (
+                data['trackId'],
+                data['trackName'].lower(),
+                data['trackExplicitness'],
+                data['primaryGenreName'].lower(),
+                data['artistName'].lower(),
+                data['artistId'],
+                data['collectionName'].lower(),
+                data['collectionId'],
+                data['trackViewUrl'],
+                duration_in_minutes,
+            )
+        )
+        conn.commit()
+        conn.close()
+
+    def get_song_by_id(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM songs WHERE id=?', (id,))
+        row = cursor.fetchone()
+        conn.close()
+        return row
+
+    def update_song(self, id, name, genre):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_song_by_id(id)):
+            if (name):
+                cursor.execute('UPDATE songs SET name=? WHERE id=?', (name, id,))
+            if (genre):
+                cursor.execute('UPDATE songs SET genre=? WHERE id=?', (genre, id,))
+            conn.commit()
+            song = self.get_song_by_id(id)
+            conn.close()
+            return song
+        return False
+
+    def delete_song(self, id):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_song_by_id(id)):
+            cursor.execute('DELETE FROM songs WHERE id=?', (id,))
+            conn.commit()
+            conn.close()
+            return True
+        return False

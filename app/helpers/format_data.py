@@ -17,3 +17,17 @@ def format_album(album):
         'releaseDate': album[7],
         'url': album[8],
     }
+
+def format_song(song):
+    return {
+        'id': song[0],
+        'name': song[1].capitalize(),
+        'explicit': song[2],
+        'genre': song[3].capitalize(),
+        'artist': song[4].capitalize(),
+        'artistId': song[5],
+        'album': song[6].capitalize(),
+        'albumId': song[7],
+        'url': song[8],
+        'duration': song[9],
+    }

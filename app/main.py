@@ -7,6 +7,7 @@ import json
 from helpers.responses import not_found
 from controllers.artist_controller import ArtistController
 from controllers.album_controller import AlbumController
+from controllers.song_controller import SongController
 from repositories.sqlite_repository import SQLiteRepository
 
 repository = SQLiteRepository()
@@ -17,6 +18,12 @@ def route_not_found():
     return response
 
 # Artist routes
+@app.route('/artists', methods=['POST'])
+def add_artist():
+  controller = ArtistController(repository)
+  response = controller.add_artist(request)
+  return response
+
 @app.route('/artists', methods=['GET'])
 def get_artists():
   controller = ArtistController(repository)
@@ -41,12 +48,6 @@ def delete_artist(index):
   response = controller.delete_artist(index)
   return response
 
-@app.route('/artists', methods=['POST'])
-def add_artist():
-  controller = ArtistController(repository)
-  response = controller.add_artist(request)
-  return response
-
 @app.route('/artists/<int:index>/albums', methods=['GET'])
 def get_artist_albums(index):
   controller = ArtistController(repository)
@@ -66,6 +67,12 @@ def get_albums():
   response = controller.get_albums(request)
   return response
 
+@app.route('/albums/<int:index>', methods=['GET'])
+def get_album(index):
+  controller = AlbumController(repository)
+  response = controller.get_album(index)
+  return response
+
 @app.route('/albums/<int:index>', methods=['PUT'])
 def update_album(index):
   controller = AlbumController(repository)
@@ -78,10 +85,35 @@ def delete_album(index):
   response = controller.delete_album(index)
   return response
 
-@app.route('/albums/<int:index>', methods=['GET'])
-def get_album(index):
-  controller = AlbumController(repository)
-  response = controller.get_album(index)
+# Songs routes
+@app.route('/songs', methods=['POST'])
+def add_song():
+  controller = SongController(repository)
+  response = controller.add_song(request)
+  return response
+
+@app.route('/songs', methods=['GET'])
+def get_songs():
+  controller = SongController(repository)
+  response = controller.get_songs(request)
+  return response
+
+@app.route('/songs/<int:index>', methods=['GET'])
+def get_song(index):
+  controller = SongController(repository)
+  response = controller.get_song(index)
+  return response
+
+@app.route('/songs/<int:index>', methods=['PUT'])
+def update_song(index):
+  controller = SongController(repository)
+  response = controller.update_song(index, request)
+  return response
+
+@app.route('/songs/<int:index>', methods=['DELETE'])
+def delete_song(index):
+  controller = SongController(repository)
+  response = controller.delete_song(index)
   return response
 
 @app.route('/artistas/<int:index>/albuns', methods=['GET'])
@@ -242,59 +274,6 @@ def get_all_albuns():
       cursor.close()
       connection.close()
 
-@app.route('/musicas',methods=['GET'])
-def get_all_songs():
-  try:
-    sql = "SELECT * FROM songs"
-    connection = connect_to_db()
-    if (connection.is_connected()):
-      cursor = connection.cursor(pymysql.cursors.DictCursor)
-      cursor.execute(sql)
-      rows = cursor.fetchall()
-      row_headers = [column_name[0] for column_name in cursor.description]
-      response = []
-      for result in rows:
-        response.append(dict(zip(row_headers,result)))
-      response = jsonify(response)
-      response.status_code = 200
-      return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if connection.is_connected():
-      cursor.close()
-      connection.close()
-
-@app.route('/musicas/<int:index>', methods=['GET'])
-def get_song(index):
-  try:
-    connection = connect_to_db()
-    sql = "SELECT * FROM songs WHERE idSong=%s"
-    if (connection.is_connected()):
-      cursor = connection.cursor(pymysql.cursors.DictCursor)
-      cursor.execute(sql,(index,))
-      row = cursor.fetchone()
-      if (not row):
-        response = jsonify("Song not on DB.")
-        response.status_code = 404
-      else:
-        row_headers = [column_name[0] for column_name in cursor.description]
-        response = []
-        response.append(dict(zip(row_headers,row)))
-        response = jsonify(response)
-        response.status_code = 200
-      return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (connection.is_connected()):
-      cursor.close()
-      connection.close()
-
 @app.route('/albuns/<int:index>/musicas', methods=['GET'])
 def get_songs_album(index):
   try:
@@ -363,33 +342,6 @@ def get_song_album(index_album,index_musica):
     response = jsonify("Error: " + str(e))
     response.status_code = 400
     return response
-
-@app.route('/musicas/<int:index>',methods=['DELETE'])
-def delete_song(index):
-  try:
-    connection = connect_to_db()
-    find, _= helpers.id_on_db(index,"songs")
-    if (not find):
-      response = jsonify("Song not on DB.")
-      response.status_code = 404
-    else:
-      sql = "DELETE FROM songs WHERE idSong=%s"
-      if (connection.is_connected()):
-        cursor = connection.cursor()
-        cursor.execute(sql,(index,))
-        connection.commit()
-        response = "Deletion successful."
-        response = jsonify(response)
-        response.status_code = 200
-    return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (find and connection.is_connected()):
-      cursor.close()
-      connection.close()
       
 @app.route('/albuns/<int:index_album>/musicas/<int:index_musica>',methods=['DELETE'])
 def delete_song_album(index_album,index_musica):
@@ -452,80 +404,6 @@ def delete_songs_album(index):
     return response
   finally:
     if (find and connection.is_connected()):
-      cursor.close()
-      connection.close()
-
-@app.route('/albuns/<int:index>/musicas',methods=['POST'])
-def add_song(index):
-  try:
-    newSong = request.get_json()
-    noParamName = False
-    inputNotString = False
-    if (not newSong):
-      response = jsonify("No Body in request.")
-      response.status_code = 400
-    elif ("name" not in newSong.keys()):
-      noParamName = True
-      response = jsonify("No name parameter in request body.")
-      response.status_code = 400
-    elif (type(newSong["name"]) != str):
-      inputNotString = True
-      response = jsonify("Name parameter must be str type.")
-      response.status_code = 400
-    else:
-      findAlbum, row = helpers.id_on_db(index,"albuns")
-      if (not findAlbum):
-        response = jsonify("Album not on DB.")
-        response.status_code = 404
-      else:
-        connection = connect_to_db()
-        if (connection.is_connected()):
-          cursor = connection.cursor()
-          albumId = row[5]
-          if (not albumId):
-            response = jsonify("Album not on iTunes, no Songs.")
-            response.status_code = 200
-          else:
-            songs = helpers.get_type_from_id(albumId,"song")
-            if (type(songs) == str):
-              response = jsonify(songs)
-              response.status_code = 400
-            else:
-              dataToSave = []
-              for song in songs:
-                if (song['trackName'].lower() == newSong['name'].lower()):
-                  dataToSave.append({
-                      'nameSong' : song['trackName'],
-                      'explicit' : song['trackExplicitness'],
-                      'genre' : song['primaryGenreName'],
-                      'idSongItunes' : song['trackId'],
-                      'nameArtistSong' : song['artistName'],
-                      'nameAlbumSong' : song['collectionName'],
-                      'artistIdItunes' : song['artistId']
-                  }) 
-                  break
-              if (not dataToSave):
-                response = jsonify("Song not on iTunes.")
-                response.status_code = 200
-              else:
-                findSong = helpers.on_db(dataToSave[0]['idSongItunes'],"songs")
-                if (findSong):
-                  response = jsonify("Song already on DB.")
-                  response.status_code = 200
-                else:
-                  sql = "INSERT INTO songs (nameSong, explicit, genre, idSongItunes, nameArtistSong, nameAlbumSong, idAlbumSong) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                  data = (dataToSave[0]['nameSong'],dataToSave[0]['explicit'],dataToSave[0]['genre'],dataToSave[0]['idSongItunes'],dataToSave[0]['nameArtistSong'],dataToSave[0]['nameAlbumSong'],index)
-                  cursor.execute(sql,data)
-                  connection.commit()
-                  response = jsonify("Added successful.")
-                  response.status_code = 200              
-    return response
-  except Exception as e:
-    response = jsonify("Error: " + str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (newSong and not noParamName and not inputNotString and findAlbum and connection.is_connected()):
       cursor.close()
       connection.close()
 

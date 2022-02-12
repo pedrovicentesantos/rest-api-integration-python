@@ -24,8 +24,26 @@ class ItunesController:
             if (response.status_code == 200):
                 data = response.json()
                 for album in data['results']:
-                    if (album['collectionName'].lower() == name):
+                    if (album['collectionName'].lower() == name
+                        and album['artistName'].lower() == artist
+                    ):
                         return album
+
+        except Exception as e:
+            print(e)
+
+    def get_song_by_artist_and_album_by_name(self, name, artist, album):
+        try:
+            url = '{}=musicTrack&term={}'.format(self.base_url, album)
+            response = requests.get(url)
+            if (response.status_code == 200):
+                data = response.json()
+                for song in data['results']:
+                    if (song['collectionName'].lower() == album
+                        and song['artistName'].lower() == artist
+                        and song['trackName'].lower() == name
+                    ):
+                        return song
 
         except Exception as e:
             print(e)
