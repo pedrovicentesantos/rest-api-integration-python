@@ -91,6 +91,12 @@ def delete_album(index):
   response = controller.delete_album(index)
   return response
 
+@app.route('/albums/<int:index>/songs', methods=['GET'])
+def get_album_songs(index):
+  controller = AlbumController(repository)
+  response = controller.get_songs(index, request)
+  return response
+
 # Songs routes
 @app.route('/songs', methods=['POST'])
 def add_song():
@@ -146,36 +152,6 @@ def get_all_albuns_artist(index):
     return response
   except Exception as e:
     response = jsonify("Error: "+str(e))
-    response.status_code = 400
-    return response
-  finally:
-    if (find and connection.is_connected()):
-      cursor.close()
-      connection.close()
-
-@app.route('/artistas/<int:index>/musicas', methods=['GET'])
-def get_all_songs_artist(index):
-  try:
-    find, _ = helpers.id_on_db(index,"artists")
-    if (not find):
-      response = jsonify("Artist not on DB.")
-      response.status_code = 404
-    else:  
-      connection = connect_to_db()
-      sql = "SELECT songs.* FROM songs INNER JOIN albuns ON albuns.idArtistAlbum=%s"
-      if (connection.is_connected()):
-        cursor = connection.cursor(pymysql.cursors.DictCursor)
-        cursor.execute(sql,(index,))
-        rows = cursor.fetchall()
-        row_headers = [column_name[0] for column_name in cursor.description]
-        response = []
-        for row in rows:
-          response.append(dict(zip(row_headers,row)))  
-      response = jsonify(response)
-      response.status_code = 200
-    return response
-  except Exception as e:
-    reponse = jsonify("Error: "+str(e))
     response.status_code = 400
     return response
   finally:

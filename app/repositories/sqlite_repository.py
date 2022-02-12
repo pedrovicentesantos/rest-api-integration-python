@@ -194,6 +194,19 @@ class SQLiteRepository:
             return True
         return False
 
+    def get_album_songs(self, id, name):
+        conn = self.connect()
+        cursor = conn.cursor()
+        if (self.get_album_by_id(id)):
+            if (name):
+                cursor.execute('SELECT * FROM songs WHERE albumId=? AND name LIKE ?', (id, '%{}%'.format(name),))
+            else:
+                cursor.execute('SELECT * FROM songs WHERE albumId=?', (id,))
+            rows = cursor.fetchall()
+            conn.close()
+            return rows
+        return False
+
     # Song functionalities
     def get_songs(self, name, artist, album, genre):
         conn = self.connect()
