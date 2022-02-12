@@ -1,9 +1,5 @@
-import pymysql
 from app import app
-import helpers
-from db_connect import connect_to_db
-from flask import flash, request, jsonify
-import json
+from flask import request
 from helpers.responses import not_found
 from controllers.artist_controller import ArtistController
 from controllers.album_controller import AlbumController
@@ -41,7 +37,7 @@ def update_artist(index):
   controller = ArtistController(repository)
   response = controller.update_artist(index, request)
   return response
-  
+
 @app.route('/artists/<int:index>', methods=['DELETE'])
 def delete_artist(index):
   controller = ArtistController(repository)
