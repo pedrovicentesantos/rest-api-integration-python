@@ -42,7 +42,7 @@ class ItunesController:
         except Exception as e:
             print(e)
 
-    def get_album_by_artist_by_name(self, name, artist):
+    def get_album_by_artist_name(self, name, artist):
         try:
             url = '{}=album&term={}'.format(self.base_search_url, artist)
             response = requests.get(url)
@@ -57,7 +57,7 @@ class ItunesController:
         except Exception as e:
             print(e)
 
-    def get_song_by_artist_and_album_by_name(self, name, artist, album):
+    def get_song_by_artist_and_album_names(self, name, artist, album):
         try:
             url = '{}=musicTrack&term={}'.format(self.base_search_url, album)
             response = requests.get(url)

@@ -18,12 +18,12 @@ class AlbumController:
             
             name = request_data['name'].lower()
             artist = request_data['artist'].lower()
-            db_album = self.repository.get_album_by_artist_by_name(name, artist)
+            db_album = self.repository.get_album_by_artist_name(name, artist)
             if (db_album):
                 return bad_request('Album already exists')
 
             itunes_controller = ItunesController()
-            album = itunes_controller.get_album_by_artist_by_name(name, artist)
+            album = itunes_controller.get_album_by_artist_name(name, artist)
             if (not album):
                 return not_found('Album not found')
 

@@ -118,7 +118,7 @@ class SQLiteRepository:
         conn.close()
         return row
 
-    def get_album_by_artist_by_name(self, name, artist):
+    def get_album_by_artist_name(self, name, artist):
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM albums WHERE name=? AND artistName=?', (name, artist,))
@@ -224,7 +224,7 @@ class SQLiteRepository:
         conn.close()
         return row
 
-    def get_song_by_artist_and_album_by_name(self, name, artist, album):
+    def get_song_by_artist_and_album_names(self, name, artist, album):
         conn = self.connect()
         cursor = conn.cursor()
         cursor.execute('SELECT * FROM songs WHERE name=? AND artistName=? AND albumName=?', (name, artist, album,))

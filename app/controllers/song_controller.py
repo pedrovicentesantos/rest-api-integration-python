@@ -21,12 +21,12 @@ class SongController:
             name = request_data['name'].lower()
             artist = request_data['artist'].lower()
             album = request_data['album'].lower()
-            db_song = self.repository.get_song_by_artist_and_album_by_name(name, artist, album)
+            db_song = self.repository.get_song_by_artist_and_album_names(name, artist, album)
             if (db_song):
                 return bad_request('Song already exists')
 
             itunes_controller = ItunesController()
-            song = itunes_controller.get_song_by_artist_and_album_by_name(name, artist, album)
+            song = itunes_controller.get_song_by_artist_and_album_names(name, artist, album)
             if (not song):
                 return not_found('Song not found')
 
