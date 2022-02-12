@@ -76,7 +76,7 @@ class ArtistController:
                 return bad_request('Song already exists')
 
             itunes_controller = ItunesController()
-            song = itunes_controller.get_song_by_artist_id(index, song_name)
+            song = itunes_controller.get_song_by_data_id(index, song_name)
             if (not song):
                 return not_found('Song not found')
 

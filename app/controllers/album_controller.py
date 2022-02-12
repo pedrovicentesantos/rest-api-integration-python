@@ -33,6 +33,34 @@ class AlbumController:
         except Exception as e:
             return internal_server_error(str(e))
 
+    def add_song_to_album(self, index, request):
+        try:
+            request_data = request.get_json()
+            if (not request_data):
+                return bad_request('No body provided')
+            if ('name' not in request_data.keys() or not request_data['name']):
+                return bad_request('No name provided')
+            
+            album = self.repository.get_album_by_id(index)
+            if (not album):
+                return not_found('Album not found')
+            
+            song_name = request_data['name'].lower()
+            song = self.repository.get_song_by_album_id(song_name, index)
+            if (song):
+                return bad_request('Song already exists')
+
+            itunes_controller = ItunesController()
+            song = itunes_controller.get_song_by_data_id(index, song_name)
+            if (not song):
+                return not_found('Song not found')
+
+            self.repository.add_song(song)
+            return ok(song)
+
+        except Exception as e:
+            return internal_server_error(str(e))
+
     def get_albums(self, request):
         try:
             request_data = request.args
