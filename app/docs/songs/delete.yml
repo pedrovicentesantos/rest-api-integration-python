@@ -1,0 +1,28 @@
+Endpoint to delete a specif song
+---
+tags:
+  - songs
+parameters:
+  - name: index
+    in: path
+    description: Song id
+    schema:
+      type: integer
+      required: true
+      example: 1440880507
+responses:
+  '204':
+    description: The deletion was successful
+  '404':
+    description: Song not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Song not found'
+  '5XX':
+    description: Internal server error

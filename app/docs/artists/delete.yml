@@ -1,0 +1,28 @@
+Endpoint to delete a specif artist
+---
+tags:
+  - artists
+parameters:
+  - name: index
+    in: path
+    description: Artist id
+    schema:
+      type: integer
+      required: true
+      example: 324916925
+responses:
+  '204':
+    description: The deletion was successful
+  '404':
+    description: Artist not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Artist not found'
+  '5XX':
+    description: Internal server error

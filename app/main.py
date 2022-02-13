@@ -38,6 +38,7 @@ def update_artist(index):
   return response
 
 @app.route('/artists/<int:index>', methods=['DELETE'])
+@swag_from('docs/artists/delete.yml')
 def delete_artist(index):
   controller = ArtistController(repository)
   response = controller.delete_artist(index)
@@ -97,6 +98,7 @@ def update_album(index):
   return response
 
 @app.route('/albums/<int:index>', methods=['DELETE'])
+@swag_from('docs/albums/delete.yml')
 def delete_album(index):
   controller = AlbumController(repository)
   response = controller.delete_album(index)
@@ -143,6 +145,7 @@ def update_song(index):
   return response
 
 @app.route('/songs/<int:index>', methods=['DELETE'])
+@swag_from('docs/songs/delete.yml')
 def delete_song(index):
   controller = SongController(repository)
   response = controller.delete_song(index)

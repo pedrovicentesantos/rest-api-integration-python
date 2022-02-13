@@ -1,0 +1,28 @@
+Endpoint to delete a specif album
+---
+tags:
+  - albums
+parameters:
+  - name: index
+    in: path
+    description: Album id
+    schema:
+      type: integer
+      required: true
+      example: 1457234843
+responses:
+  '204':
+    description: The deletion was successful
+  '404':
+    description: Album not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Album not found'
+  '5XX':
+    description: Internal server error
