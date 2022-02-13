@@ -44,14 +44,20 @@ class BaseRepository:
     def get_artists(self, name, genre):
         conn = self.connect()
         cursor = conn.cursor()
-        if (name and genre):
-            cursor.execute('SELECT * FROM artists WHERE name LIKE ? AND genre=?', ('%{}%'.format(name), genre,))
-        elif (name):
-            cursor.execute('SELECT * FROM artists WHERE name LIKE ?', ('%{}%'.format(name),))
-        elif (genre):
-            cursor.execute('SELECT * FROM artists WHERE genre=?', (genre,))
-        else:
-            cursor.execute('SELECT * FROM artists')
+        query = 'SELECT * FROM artists'
+        query_object = []
+
+        if (name):
+            query += ' WHERE name LIKE ?'
+            query_object.append('%{}%'.format(name))
+        if (genre):
+            if (len(query_object) > 0):
+                query += ' AND genre=?'
+            else:
+                query += ' WHERE genre=?'
+            query_object.append(genre)
+        
+        cursor.execute(query, tuple(query_object,))
 
         rows = cursor.fetchall()
         conn.close()
@@ -157,22 +163,26 @@ class BaseRepository:
     def get_albums(self, name, artist, genre):
         conn = self.connect()
         cursor = conn.cursor()
-        if (name and artist and genre):
-            cursor.execute('SELECT * FROM albums WHERE name LIKE ? AND artistName LIKE ? AND genre=?', ('%{}%'.format(name), '%{}%'.format(artist), genre,))
-        elif (name and artist):
-            cursor.execute('SELECT * FROM albums WHERE name LIKE ? AND artistName LIKE ?', ('%{}%'.format(name), '%{}%'.format(artist),))
-        elif (name and genre):
-            cursor.execute('SELECT * FROM albums WHERE name LIKE ? AND genre=?', ('%{}%'.format(name), genre,))
-        elif (artist and genre):
-            cursor.execute('SELECT * FROM albums WHERE artistName LIKE ? AND genre=?', ('%{}%'.format(artist), genre,))
-        elif (name):
-            cursor.execute('SELECT * FROM albums WHERE name LIKE ?', ('%{}%'.format(name),))
-        elif (artist):
-            cursor.execute('SELECT * FROM albums WHERE artistName LIKE ?', ('%{}%'.format(artist),))
-        elif (genre):
-            cursor.execute('SELECT * FROM albums WHERE genre=?', (genre,))
-        else:
-            cursor.execute('SELECT * FROM albums')
+        query = 'SELECT * FROM albums'
+        query_object = []
+
+        if (name):
+            query += ' WHERE name LIKE ?'
+            query_object.append('%{}%'.format(name))
+        if (artist):
+            if (len(query_object) > 0):
+                query += ' AND artistName=?'
+            else:
+                query += ' WHERE artistName=?'
+            query_object.append(artist)
+        if (genre):
+            if (len(query_object) > 0):
+                query += ' AND genre=?'
+            else:
+                query += ' WHERE genre=?'
+            query_object.append(genre)
+        
+        cursor.execute(query, tuple(query_object,))
 
         rows = cursor.fetchall()
         conn.close()
