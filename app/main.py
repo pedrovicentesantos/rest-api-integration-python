@@ -7,8 +7,8 @@ from controllers.song_controller import SongController
 from repositories.sqlite_repository import SQLiteRepository
 from repositories.mysql_repository import MySQLRepository
 
-repository = SQLiteRepository('initSqlite3.sql')
-# repository = MySQLRepository()
+# repository = SQLiteRepository('initSqlite3.sql')
+repository = MySQLRepository()
 
 # Artist routes
 @app.route('/artists', methods=['POST'])
