@@ -1,0 +1,55 @@
+Endpoint to create song belonging to album
+---
+tags:
+  - albums
+parameters:
+  - name: body
+    in: body
+    description: Song name
+    schema:
+      type: object
+      required: true
+      properties:
+        name:
+          type: string
+          example: 'Radar'
+  - name: index
+    in: path
+    description: Album id
+    schema:
+      type: integer
+      required: true
+      example: 1457234843
+responses:
+  '200':
+    description: The saved song information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Song'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Album or song not found
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Album not found'
+  '5XX':
+    description: Internal server error

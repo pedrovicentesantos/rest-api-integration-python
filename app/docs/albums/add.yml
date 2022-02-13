@@ -1,0 +1,51 @@
+Endpoint to create album
+---
+tags:
+  - albums
+parameters:
+  - name: body
+    in: body
+    description: Album information
+    schema:
+      type: object
+      required: true
+      properties:
+        artist:
+          type: string
+          example: 'Britney spears'
+        name:
+          type: string
+          example: 'Blackout'
+responses:
+  '200':
+    description: The saved album information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Album'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Album not found on iTunes
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Album not found'
+  '5XX':
+    description: Internal server error

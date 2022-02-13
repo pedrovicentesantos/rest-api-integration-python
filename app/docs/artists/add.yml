@@ -1,0 +1,48 @@
+Endpoint to create artist
+---
+tags:
+  - artists
+parameters:
+  - name: body
+    in: body
+    description: Artist name
+    schema:
+      type: object
+      required: true
+      properties:
+        name:
+          type: string
+          example: 'Britney spears'
+responses:
+  '200':
+    description: The saved artist information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Artist'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Artist not found on iTunes
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Artist not found'
+  '5XX':
+    description: Internal server error

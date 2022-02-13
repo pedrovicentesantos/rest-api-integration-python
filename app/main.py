@@ -12,6 +12,7 @@ repository = SQLiteRepository('initSqlite3.sql')
 
 # Artist routes
 @app.route('/artists', methods=['POST'])
+@swag_from('docs/artists/add.yml')
 def add_artist():
   controller = ArtistController(repository)
   response = controller.add_artist(request)
@@ -59,12 +60,14 @@ def get_artist_songs(index):
   return response
 
 @app.route('/artists/<int:index>/albums', methods=['POST'])
+@swag_from('docs/artists/add_album.yml')
 def add_album_to_artist(index):
   controller = ArtistController(repository)
   response = controller.add_album_to_artist(index, request)
   return response
 
 @app.route('/artists/<int:index>/songs', methods=['POST'])
+@swag_from('docs/artists/add_song.yml')
 def add_song_to_artist(index):
   controller = ArtistController(repository)
   response = controller.add_song_to_artist(index, request)
@@ -72,6 +75,7 @@ def add_song_to_artist(index):
 
 # Album routes
 @app.route('/albums', methods=['POST'])
+@swag_from('docs/albums/add.yml')
 def add_album():
   controller = AlbumController(repository)
   response = controller.add_album(request)
@@ -112,6 +116,7 @@ def get_album_songs(index):
   return response
 
 @app.route('/albums/<int:index>/songs', methods=['POST'])
+@swag_from('docs/albums/add_song.yml')
 def add_song_to_album(index):
   controller = AlbumController(repository)
   response = controller.add_song_to_album(index, request)
@@ -119,6 +124,7 @@ def add_song_to_album(index):
 
 # Songs routes
 @app.route('/songs', methods=['POST'])
+@swag_from('docs/songs/add.yml')
 def add_song():
   controller = SongController(repository)
   response = controller.add_song(request)

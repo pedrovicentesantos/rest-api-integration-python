@@ -1,0 +1,55 @@
+Endpoint to create album belonging to artist
+---
+tags:
+  - artists
+parameters:
+  - name: body
+    in: body
+    description: Album name
+    schema:
+      type: object
+      required: true
+      properties:
+        name:
+          type: string
+          example: 'Blackout'
+  - name: index
+    in: path
+    description: Artist id
+    schema:
+      type: integer
+      required: true
+      example: 324916925
+responses:
+  '200':
+    description: The saved album information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Album'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Artist or album not found
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Artist not found'
+  '5XX':
+    description: Internal server error

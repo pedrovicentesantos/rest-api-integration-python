@@ -1,0 +1,54 @@
+Endpoint to create song
+---
+tags:
+  - songs
+parameters:
+  - name: body
+    in: body
+    description: Song information
+    schema:
+      type: object
+      required: true
+      properties:
+        artist:
+          type: string
+          example: 'Britney spears'
+        album:
+          type: string
+          example: 'Blackout'
+        name:
+          type: string
+          example: 'Radar'
+responses:
+  '200':
+    description: The saved song information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Song'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Song not found on iTunes
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Song not found'
+  '5XX':
+    description: Internal server error
