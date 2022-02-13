@@ -16,7 +16,7 @@ Baseado no desafio proposto em: https://github.com/Infoglobo/desafio-backend-inf
 
 Após clonar o repositório, basta executar o comando `docker-compose up` e aplicação será executada.
 
-Também é possível rodar localmente utilizando uma base de dados SQLite. Para isso, é necessário alterar o `repository` utilizado no arquivo `main.py` para `SQLiteRepository` e instalar as dependências necessárias, que se encontram no arquivo `requirements.txt`.
+Também é possível rodar localmente utilizando uma base de dados SQLite. Para isso, é necessário alterar o ambiente para `test` utilizado no arquivo `main.py` e instalar as dependências necessárias, que se encontram no arquivo `requirements.txt`.
 
 Em ambos os casos a API estará disponível em http://localhost:5000.
 
