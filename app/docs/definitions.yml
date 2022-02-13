@@ -1,0 +1,54 @@
+definitions:
+  Artist:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      genre:
+        type: string
+  Album:
+    type: object
+    properties:
+      artist:
+        type: string
+      artistId:
+        type: integer
+      explicit:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      releaseDate:
+        type: string
+      trackCount:
+        type: integer
+      url:
+        type: string
+  Song:
+    type: object
+    properties:
+      album:
+        type: string
+      albumId:
+        type: integer
+      artist:
+        type: string
+      artistId:
+        type: integer
+      duration:
+        type: number
+      explicit:
+        type: string
+      genre:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      url:
+        type: string

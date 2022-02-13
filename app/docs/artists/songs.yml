@@ -1,0 +1,42 @@
+Endpoint to return and filter songs by artist
+---
+tags:
+  - artists
+parameters:
+  - name: name
+    in: query
+    description: Song name to filter by
+    schema:
+      type: string
+      required: false
+      example: 'Castle'
+  - name: index
+    in: path
+    description: Artist id
+    schema:
+      type: integer
+      required: true
+      example: 324916925
+responses:
+  '200':
+    description: The saved songs that match query belonging to artist
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/definitions/Song'
+  '404':
+    description: Artist not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Artist not found'
+  '5XX':
+    description: Internal server error

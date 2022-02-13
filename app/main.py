@@ -1,13 +1,14 @@
 from app import app
 from flask import request
+from flasgger import swag_from
 from controllers.artist_controller import ArtistController
 from controllers.album_controller import AlbumController
 from controllers.song_controller import SongController
 from repositories.sqlite_repository import SQLiteRepository
 from repositories.mysql_repository import MySQLRepository
 
-# repository = SQLiteRepository('initSqlite3.sql')
-repository = MySQLRepository()
+repository = SQLiteRepository('initSqlite3.sql')
+# repository = MySQLRepository()
 
 # Artist routes
 @app.route('/artists', methods=['POST'])
@@ -17,12 +18,14 @@ def add_artist():
   return response
 
 @app.route('/artists', methods=['GET'])
+@swag_from('docs/artists/artists.yml')
 def get_artists():
   controller = ArtistController(repository)
   response = controller.get_artists(request)
   return response
 
 @app.route('/artists/<int:index>', methods=['GET'])
+@swag_from('docs/artists/artist.yml')
 def get_artist(index):
   controller = ArtistController(repository)
   response = controller.get_artist(index)
@@ -41,12 +44,14 @@ def delete_artist(index):
   return response
 
 @app.route('/artists/<int:index>/albums', methods=['GET'])
+@swag_from('docs/artists/albums.yml')
 def get_artist_albums(index):
   controller = ArtistController(repository)
   response = controller.get_albums(index, request)
   return response
 
 @app.route('/artists/<int:index>/songs', methods=['GET'])
+@swag_from('docs/artists/songs.yml')
 def get_artist_songs(index):
   controller = ArtistController(repository)
   response = controller.get_songs(index, request)
@@ -72,12 +77,14 @@ def add_album():
   return response
 
 @app.route('/albums', methods=['GET'])
+@swag_from('docs/albums/albums.yml')
 def get_albums():
   controller = AlbumController(repository)
   response = controller.get_albums(request)
   return response
 
 @app.route('/albums/<int:index>', methods=['GET'])
+@swag_from('docs/albums/album.yml')
 def get_album(index):
   controller = AlbumController(repository)
   response = controller.get_album(index)
@@ -96,6 +103,7 @@ def delete_album(index):
   return response
 
 @app.route('/albums/<int:index>/songs', methods=['GET'])
+@swag_from('docs/albums/songs.yml')
 def get_album_songs(index):
   controller = AlbumController(repository)
   response = controller.get_songs(index, request)
@@ -115,12 +123,14 @@ def add_song():
   return response
 
 @app.route('/songs', methods=['GET'])
+@swag_from('docs/songs/songs.yml')
 def get_songs():
   controller = SongController(repository)
   response = controller.get_songs(request)
   return response
 
 @app.route('/songs/<int:index>', methods=['GET'])
+@swag_from('docs/songs/song.yml')
 def get_song(index):
   controller = SongController(repository)
   response = controller.get_song(index)

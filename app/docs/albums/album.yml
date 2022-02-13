@@ -1,0 +1,34 @@
+Endpoint to return a specif album
+---
+tags:
+  - albums
+parameters:
+  - name: index
+    in: path
+    description: Album id
+    schema:
+      type: integer
+      required: true
+      example: 1457234843
+responses:
+  '200':
+    description: The saved album information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Album'
+  '404':
+    description: Album not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Album not found'
+  '5XX':
+    description: Internal server error

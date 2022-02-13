@@ -1,0 +1,45 @@
+Endpoint to return and filter saved songs
+---
+tags:
+  - songs
+parameters:
+  - name: name
+    in: query
+    description: Song name to filter by
+    schema:
+      type: string
+      required: false
+      example: 'Castle'
+  - name: album
+    in: query
+    description: Album name to filter by
+    schema:
+      type: string
+      required: false
+      example: 'Badlands'
+  - name: artist
+    in: query
+    description: Artist name to filter by
+    schema:
+      type: string
+      required: false
+      example: 'Halsey'
+  - name: genre
+    in: query
+    description: Genre to filter by
+    schema:
+      type: string
+      required: false
+      example: 'Alternative'
+responses:
+  '200':
+    description: The saved songs that match query
+    schema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/definitions/Song'
+  '5XX':
+    description: Internal server error
