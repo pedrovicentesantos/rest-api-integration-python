@@ -37,7 +37,9 @@ class BaseRepository:
             (data['artistId'], data['artistName'].lower(), data['primaryGenreName'].lower(),)
         )
         conn.commit()
+        artist = self.get_artist_by_id(data['artistId'])
         conn.close()
+        return artist
 
     def get_artists(self, name, genre):
         conn = self.connect()
@@ -148,7 +150,9 @@ class BaseRepository:
             )
         )
         conn.commit()
+        album = self.get_album_by_id(data['collectionId'])
         conn.close()
+        return album
 
     def get_albums(self, name, artist, genre):
         conn = self.connect()
@@ -264,7 +268,9 @@ class BaseRepository:
             )
         )
         conn.commit()
+        song = self.get_song_by_id(data['trackId'])
         conn.close()
+        return song
 
     def get_songs(self, name, artist, album, genre):
         conn = self.connect()

@@ -24,8 +24,8 @@ class ArtistController:
             if (not artist):
                 return not_found('Artist not found')
 
-            self.repository.add_artist(artist)
-            return ok(artist)
+            created_artist = self.repository.add_artist(artist)
+            return ok(format_artist(created_artist))
 
         except Exception as e:
             return internal_server_error(str(e))
@@ -52,8 +52,8 @@ class ArtistController:
             if (not album):
                 return not_found('Album not found')
 
-            self.repository.add_album(album)
-            return ok(album)
+            created_album = self.repository.add_album(album)
+            return ok(format_album(created_album))
 
         except Exception as e:
             return internal_server_error(str(e))
@@ -80,8 +80,8 @@ class ArtistController:
             if (not song):
                 return not_found('Song not found')
 
-            self.repository.add_song(song)
-            return ok(song)
+            created_song = self.repository.add_song(song)
+            return ok(format_song(created_song))
 
         except Exception as e:
             return internal_server_error(str(e))

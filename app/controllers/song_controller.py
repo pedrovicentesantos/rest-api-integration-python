@@ -30,8 +30,8 @@ class SongController:
             if (not song):
                 return not_found('Song not found')
 
-            self.repository.add_song(song)
-            return ok(song)
+            created_song = self.repository.add_song(song)
+            return ok(format_song(created_song))
 
         except Exception as e:
             return internal_server_error(str(e))
