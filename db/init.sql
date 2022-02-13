@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS albums (
   `genre` VARCHAR(45) NOT NULL,
   `artistName` VARCHAR(255) NOT NULL,
   `artistId` INT NOT NULL,
-  `releaseDate` DATE NOT NULL,
+  `releaseDate` DATETIME NOT NULL,
   `url` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`));
 	

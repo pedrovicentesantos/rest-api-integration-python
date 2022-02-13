@@ -1,17 +1,13 @@
 from app import app
 from flask import request
-from helpers.responses import not_found
 from controllers.artist_controller import ArtistController
 from controllers.album_controller import AlbumController
 from controllers.song_controller import SongController
 from repositories.sqlite_repository import SQLiteRepository
+from repositories.mysql_repository import MySQLRepository
 
-repository = SQLiteRepository()
-
-@app.errorhandler(404)
-def route_not_found():
-    response = not_found('Route not found')
-    return response
+# repository = SQLiteRepository('initSqlite3.sql')
+repository = MySQLRepository()
 
 # Artist routes
 @app.route('/artists', methods=['POST'])
