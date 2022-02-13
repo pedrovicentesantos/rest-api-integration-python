@@ -33,6 +33,7 @@ def get_artist(index):
   return response
 
 @app.route('/artists/<int:index>', methods=['PUT'])
+@swag_from('docs/artists/update.yml')
 def update_artist(index):
   controller = ArtistController(repository)
   response = controller.update_artist(index, request)
@@ -96,6 +97,7 @@ def get_album(index):
   return response
 
 @app.route('/albums/<int:index>', methods=['PUT'])
+@swag_from('docs/albums/update.yml')
 def update_album(index):
   controller = AlbumController(repository)
   response = controller.update_album(index, request)
@@ -145,6 +147,7 @@ def get_song(index):
   return response
 
 @app.route('/songs/<int:index>', methods=['PUT'])
+@swag_from('docs/songs/update.yml')
 def update_song(index):
   controller = SongController(repository)
   response = controller.update_song(index, request)

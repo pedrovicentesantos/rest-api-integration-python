@@ -1,0 +1,59 @@
+Endpoint to update song information
+---
+tags:
+  - songs
+parameters:
+  - name: index
+    in: path
+    description: Song id
+    schema:
+      type: integer
+      required: true
+      example: 1440880507
+  - name: name
+    in: query
+    description: New song name
+    schema:
+      type: string
+      required: false
+      example: 'Blackout'
+  - name: genre
+    in: query
+    description: New song genre
+    schema:
+      type: string
+      required: false
+      example: 'Alternative'
+responses:
+  '200':
+    description: The updated song information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Song'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Song not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Song not found'
+  '5XX':
+    description: Internal server error

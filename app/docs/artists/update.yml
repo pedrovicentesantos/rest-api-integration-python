@@ -1,0 +1,59 @@
+Endpoint to update artist information
+---
+tags:
+  - artists
+parameters:
+  - name: index
+    in: path
+    description: Artist id
+    schema:
+      type: integer
+      required: true
+      example: 324916925
+  - name: name
+    in: query
+    description: New artist name
+    schema:
+      type: string
+      required: false
+      example: 'Halsey'
+  - name: genre
+    in: query
+    description: New artist genre
+    schema:
+      type: string
+      required: false
+      example: 'Alternative'
+responses:
+  '200':
+    description: The updated artist information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Artist'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Artist not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Artist not found'
+  '5XX':
+    description: Internal server error

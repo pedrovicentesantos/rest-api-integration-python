@@ -1,0 +1,59 @@
+Endpoint to update album information
+---
+tags:
+  - albums
+parameters:
+  - name: index
+    in: path
+    description: Album id
+    schema:
+      type: integer
+      required: true
+      example: 1457234843
+  - name: name
+    in: query
+    description: New album name
+    schema:
+      type: string
+      required: false
+      example: 'Blackout'
+  - name: genre
+    in: query
+    description: New album genre
+    schema:
+      type: string
+      required: false
+      example: 'Alternative'
+responses:
+  '200':
+    description: The updated album information
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: '#/definitions/Album'
+  '400':
+    description: Bad request information
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'No body provided'
+  '404':
+    description: Album not found in database
+    schema:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Album not found'
+  '5XX':
+    description: Internal server error
