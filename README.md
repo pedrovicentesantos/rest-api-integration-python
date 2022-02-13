@@ -1,111 +1,31 @@
 # Projeto
 
-Criação de uma REST API em Python que organiza os artistas do usuário e faz um CRUD, persistindo os dados em um Banco de Dados MySQL, tendo como base os dados obtidos a partir de consulta a API do Itunes. (https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html)
+Criação de uma REST API em Python que organiza os artistas do usuário e faz um CRUD, persistindo os dados em um Banco de Dados MySQL, tendo como base a integração realizada com os dados obtidos na [API do iTunes](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html).
 
 Baseado no desafio proposto em: https://github.com/Infoglobo/desafio-backend-infograficos
+
 ## Tecnologias
 
-- Python na versão 3.7.6
-  * Uso do framework Flask para criação das rotas da API
+- Python na versão 3.8
+  - Uso do framework Flask para criação das rotas da API
 - Docker
-  * Uso do Docker Compose para linkar a aplicação em Python com o banco de dados
+  - Uso do Docker Compose para rodar a API e o banco de dados
 - Banco de Dados MySQL na versão 8.0
 
-## Instalação
+## Rodando a aplicação
 
-Para utilizar o projeto é necessário ter o Docker e Docker Compose instalado. O projeto foi testado e está funcionando corretamente com o Docker Toolbox no Windows.
+Após clonar o repositório, basta executar o comando `docker-compose up` e aplicação será executada.
 
-Para começar a utilizar deve-se clonar o repositório:
+Também é possível rodar localmente utilizando uma base de dados SQLite. Para isso, é necessário alterar o `repository` utilizado no arquivo `main.py` para `SQLiteRepository` e instalar as dependências necessárias, que se encontram no arquivo `requirements.txt`.
 
-```shell
-git clone https://github.com/pedrovicentesantos/rest-api-integration-python.git
-cd rest-api-integration-python
-```
-
-É importante manter a seguinte estrutura dos arquivos. Caso contrário, o `docker-compose` não irá encontrar os arquivos e não vai funcionar.
-  
-    rest-api-integration-python  
-    └── app
-    │    ├── app.py
-    │    ├── db_connect.py
-    │    ├── Dockerfile
-    │    ├── helpers.py
-    │    ├── main.py
-    │    ├── requirements.py
-    │    └── test_helpers.py
-    └── db
-    │    └── init.sql
-    ├── docker-compose.yml
-    └── README.md
-
-Depois de fazer o download dos arquivos deste repositório, para começar a usar deve-se fazer:
-
-```shell
-docker-compose up  # Cria as imagens e os containers
-```
-
-Feito isto, o container já estará funcionando. Dependendo do sistema operacional utilizado pode-se acessar a API por meio de `localhost:5000` ou `192.168.99.100:5000`.
-
-O IP `192.168.99.100` é o default no Windows, mas caso não funcione, para pegar o IP correto pode-se usar o comando `docker-machine ip`.
-
-## Comandos úteis
-
-- Para parar o container:
-
-```shell
-docker-compose stop
-```
-
-- Para retomar o uso do container:
-
-```shell
-docker-compose start
-```
-
-- Para criar os containers novamente após alterações no código:
-
-```shell
-docker-compose up --build
-```
-
-- Para rodar os containers sem travar o terminal:
-
-```shell
-docker-compose up -d    # Pode-se usar --detach também
-```
-
-É importante comentar que o seguinte comando fará com que os dado não sejam persistidos no Banco de Dados:
-
-```shell
-docker-compose down   # Este comando deleta os containers e os dados do BD são reiniciados ao dar up nos containers novamente
-```
-
-Portanto, deve-se tomar cuidado ao usar este comando, pois pode gerar perda de dados.
-
-## Funcionamento
-Ao usar a API pela primeira vez, o Banco de Dados é inicializado com nenhum dado, apenas a base de dados e as tabelas são criadas.
-
-O primeiro passo então é adicionar algum artista ao BD. Para isso, pode-se usar comandos como `curl` ou programas específicos para este fim como `Postman` e `Insomnia`.
-
-Com essas ferramentas é possível fazer os requests corretamente e incluir o `body` do request corretamente quando necessário.
-
-Exemplos de usos podem ser vistos no link para a documentação no Postman:
-
-https://documenter.getpostman.com/view/10132901/SWT5j1Zc
+Em ambos os casos a API estará disponível em http://localhost:5000.
 
 ## Endpoints
-Com o container rodando no Docker é possível fazer chamadas a API utilizando os endpoints documentados em:
 
-https://documenter.getpostman.com/view/10132901/SWT5j1Zc
+A aplicação foi documentada utilizando o Flasgger e a documentação pode ser acessada em: http://localhost:5000/apidocs/.
 
-Mais informações sobre como funciona a lógica da API também se encontram no link acima.
+## Considerações
 
-## Testes Unitários
-O projeto também conta com um arquivo para testes unitários, chamado `test_helpers.py`, que pode ser encontrado dentro da pasta `app`.
+Para as rotas de criação foi considerado que o primeiro match do dado é o que o usuário procura. Foi implementado desta maneira para facilitar a integração com a API do iTunes.
 
-Para rodar os testes basta usar o comando:
-
-```shell
-python test_helpers.py
-```
-
+Nas rotas de criação de álbuns e músicas, é necessário mandar além do nome do recurso, o nome do artista e do álbum, no caso das músicas. Caso contrário, seria mais difícil dificultar unicamente o que o usuário procura.
