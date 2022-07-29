@@ -13,7 +13,7 @@ itsdangerous==1.1.0
 Jinja2==2.10.3
 jsonschema==4.4.0
 MarkupSafe==1.1.1
-mistune==2.0.2
+mistune==2.0.3
 mysql-connector-python==8.0.19
 protobuf==3.6.1
 PyMySQL==0.9.3
